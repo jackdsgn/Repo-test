@@ -1,0 +1,216 @@
+{
+ "period": 16.0,
+ "bpm": 120.072,
+ "beats": [
+  0.018667,
+  0.506667,
+  1.008,
+  1.506667,
+  2.008,
+  2.506667,
+  3.008,
+  3.506667,
+  4.008,
+  4.506667,
+  5.008,
+  5.506667,
+  6.005333,
+  6.506667,
+  7.008,
+  7.506667,
+  8.008,
+  8.512,
+  9.010667,
+  9.506667,
+  10.008,
+  10.509333,
+  11.008,
+  11.509333,
+  12.008,
+  12.506667,
+  13.008,
+  13.509333,
+  14.008,
+  14.506667,
+  15.008,
+  15.509333
+ ],
+ "events": {
+  "hoverLogo": 0.018667,
+  "unfold": 0.506667,
+  "plusSpin": 1.008,
+  "clickButton": 1.506667,
+  "key1": 2.008,
+  "key2": 2.264,
+  "key3": 2.506667,
+  "key4": 2.762667,
+  "amountLand": 3.008,
+  "clickCategory": 3.506667,
+  "rowsIn": 4.008,
+  "hoverRow": 4.506667,
+  "stretch": 5.008,
+  "selectRow": 5.506667,
+  "confirmIn": 6.005333,
+  "hoverConfirm": 6.506667,
+  "clickSave": 7.008,
+  "arcClose": 7.506667,
+  "success": 8.008,
+  "cursorToToast": 8.512,
+  "clickToast": 9.010667,
+  "rollStart": 9.506667,
+  "rollLand": 10.008,
+  "deltaIn": 10.509333,
+  "hoverLink": 11.008,
+  "clickLink": 11.509333,
+  "barsDraw": 12.008,
+  "barGrow": 12.506667,
+  "hoverBar": 13.008,
+  "tooltipLine2": 13.509333,
+  "clickPlus": 14.008,
+  "plusBack": 14.506667,
+  "cursorLeave": 15.008,
+  "logoSettle": 15.509333
+ },
+ "sounds": [
+  {
+   "t": 0.018667,
+   "type": "hover",
+   "id": "hoverLogo"
+  },
+  {
+   "t": 0.506667,
+   "type": "pop",
+   "id": "unfold"
+  },
+  {
+   "t": 1.008,
+   "type": "hover",
+   "id": "plusSpin"
+  },
+  {
+   "t": 1.506667,
+   "type": "click",
+   "id": "clickButton"
+  },
+  {
+   "t": 2.008,
+   "type": "key",
+   "id": "key1"
+  },
+  {
+   "t": 2.264,
+   "type": "key",
+   "id": "key2"
+  },
+  {
+   "t": 2.506667,
+   "type": "key",
+   "id": "key3"
+  },
+  {
+   "t": 2.762667,
+   "type": "key",
+   "id": "key4"
+  },
+  {
+   "t": 3.008,
+   "type": "tick",
+   "id": "amountLand"
+  },
+  {
+   "t": 3.506667,
+   "type": "click",
+   "id": "clickCategory"
+  },
+  {
+   "t": 4.506667,
+   "type": "hover",
+   "id": "hoverRow"
+  },
+  {
+   "t": 5.506667,
+   "type": "select",
+   "id": "selectRow"
+  },
+  {
+   "t": 6.005333,
+   "type": "pop",
+   "id": "confirmIn"
+  },
+  {
+   "t": 6.506667,
+   "type": "hover",
+   "id": "hoverConfirm"
+  },
+  {
+   "t": 7.008,
+   "type": "click",
+   "id": "clickSave"
+  },
+  {
+   "t": 8.008,
+   "type": "success",
+   "id": "success"
+  },
+  {
+   "t": 9.010667,
+   "type": "click",
+   "id": "clickToast"
+  },
+  {
+   "t": 9.506667,
+   "type": "roll",
+   "id": "rollStart"
+  },
+  {
+   "t": 10.008,
+   "type": "tick",
+   "id": "rollLand"
+  },
+  {
+   "t": 10.509333,
+   "type": "pop",
+   "id": "deltaIn"
+  },
+  {
+   "t": 11.008,
+   "type": "hover",
+   "id": "hoverLink"
+  },
+  {
+   "t": 11.509333,
+   "type": "click",
+   "id": "clickLink"
+  },
+  {
+   "t": 12.506667,
+   "type": "blip",
+   "id": "barGrow"
+  },
+  {
+   "t": 13.008,
+   "type": "hover",
+   "id": "hoverBar"
+  },
+  {
+   "t": 13.509333,
+   "type": "tick",
+   "id": "tooltipLine2"
+  },
+  {
+   "t": 14.008,
+   "type": "click",
+   "id": "clickPlus"
+  },
+  {
+   "t": 14.506667,
+   "type": "hover",
+   "id": "plusBack"
+  },
+  {
+   "t": 15.008,
+   "type": "fold",
+   "id": "cursorLeave"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "fin-jack-product-film",
+  "private": true,
+  "type": "module",
+  "description": "FIN JACK product-film UI motion: one container, seek(t), rendered in headless Chrome.",
+  "scripts": {
+    "stills": "node tools/stills.mjs",
+    "render": "node tools/render.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}
