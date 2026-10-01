@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """UI sounds on measured peaks + final mix.
 
-Reads track_loop.wav and timeline.json (event times already snapped to the
-measured peaks by analyze.py — the same times film.html animates on), synthesizes
-every UI sound in code, places them on the circle and writes:
+Reads track.wav and timeline.json (event times already snapped to the measured
+peaks by analyze.py — the same times film.html animates on), synthesizes every
+UI sound in code, places them and writes:
 
-  mix_loop.wav   48 kHz / 24-bit, 16.000 s, seamless, −14 LUFS integrated
+  mix.wav   48 kHz / 24-bit, 24.000 s, −14 LUFS integrated
 """
 import json
 from pathlib import Path
@@ -111,6 +111,21 @@ def blip():
     return np.sin(2 * np.pi * np.cumsum(f) / SR) * env(t, 0.003, 0.04)
 
 
+def swipe():
+    """Drag-scroll: a short, soft filtered-noise swish."""
+    t = tvec(0.22)
+    noise = rng.standard_normal(len(t))
+    chunks = np.array_split(noise, 8)
+    y = np.concatenate([bp(c, 900 + 500 * k, 2600 + 900 * k) for k, c in enumerate(chunks)])
+    return y / np.max(np.abs(y)) * np.sin(np.pi * np.minimum(1.0, t / 0.22)) ** 2
+
+
+def blip2():
+    t = tvec(0.14)
+    f = 900 * 2 ** (t / 0.14)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * env(t, 0.003, 0.045)
+
+
 def fold():
     t = tvec(0.1)
     f = 320 - 140 * (1 - np.exp(-t / 0.03))
@@ -119,13 +134,13 @@ def fold():
 
 VOICE = {  # sound → (generator, gain)
     "click": (click, 0.38), "key": (key, 0.20), "hover": (hover, 0.045), "tick": (tick, 0.09),
-    "pop": (pop, 0.15), "select": (select, 0.15), "success": (success, 0.16), "roll": (roll, 0.07),
-    "blip": (blip, 0.08), "fold": (fold, 0.12),
+    "pop": (pop, 0.15), "select": (select, 0.20), "success": (success, 0.16), "roll": (roll, 0.07),
+    "blip": (blip, 0.08), "blip2": (blip2, 0.08), "fold": (fold, 0.12), "swipe": (swipe, 0.035),
 }
 
 
 def main():
-    music, sr = sf.read(HERE / "track_loop.wav")
+    music, sr = sf.read(HERE / "track.wav")
     assert sr == SR
     n = len(music)
     tl = json.loads((HERE / "timeline.json").read_text())
@@ -137,7 +152,7 @@ def main():
         keys += s["type"] == "key"
         i = int(round(s["t"] * SR))
         ui[i:i + len(x)] += gain * x
-    ui = ui[:n] + np.pad(ui[n:], (0, n - len(ui[n:])))       # wrap tails onto bar 1
+    ui = ui[:n]
     # UI sits slightly right of centre, a touch of width from a 9 ms Haas copy
     ui_st = np.stack([ui * 0.92, np.roll(ui, int(0.009 * SR)) * 0.8], axis=1)
     # music ducks under each UI hit (fast attack, 90 ms release) so a click on a
@@ -146,22 +161,21 @@ def main():
     att, rel = np.exp(-1 / (0.002 * SR)), np.exp(-1 / (0.09 * SR))
     e = np.zeros(n)
     acc = 0.0
-    for _ in range(2):                                        # second pass: wrap-around state
-        for i in range(n):
-            x = lvl[i]
-            acc = att * acc + (1 - att) * x if x > acc else rel * acc + (1 - rel) * x
-            e[i] = acc
+    for i in range(n):
+        x = lvl[i]
+        acc = att * acc + (1 - att) * x if x > acc else rel * acc + (1 - rel) * x
+        e[i] = acc
     duck = 1 - 0.37 * np.clip(e / 0.05, 0, 1)                  # up to −4 dB
     mix = music * 0.9 * duck[:, None] + ui_st
     meter = pyln.Meter(SR)
-    loud = meter.integrated_loudness(np.tile(mix, (2, 1)))
+    loud = meter.integrated_loudness(mix)
     mix = mix * 10 ** ((-14.0 - loud) / 20)
     peak = np.max(np.abs(mix))
     if peak > 0.89:                                           # keep ≤ −1 dBFS
         mix = np.tanh(mix / peak * 1.2) / np.tanh(1.2) * 0.89
-    sf.write(HERE / "mix_loop.wav", mix, SR, subtype="PCM_24")
-    print(f"mix_loop.wav {n / SR:.3f}s · {len(tl['sounds'])} UI sounds · "
-          f"{meter.integrated_loudness(np.tile(mix, (2, 1))):.1f} LUFS · peak {20 * np.log10(np.max(np.abs(mix))):.1f} dBFS")
+    sf.write(HERE / "mix.wav", mix, SR, subtype="PCM_24")
+    print(f"mix.wav {n / SR:.3f}s · {len(tl['sounds'])} UI sounds · "
+          f"{meter.integrated_loudness(mix):.1f} LUFS · peak {20 * np.log10(np.max(np.abs(mix))):.1f} dBFS")
 
 
 if __name__ == "__main__":

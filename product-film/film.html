@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <title>FIN JACK · Novo lançamento</title>
 <!--
-  Product-film UI motion · FIN JACK · 1080×1920 (9:16) · 16 s loop at 120 BPM.
+  Product-film UI motion · FIN JACK · 1080×1920 (9:16) · 24 s at 120 BPM.
 
   One canvas, one container (#box). Every state is the same element changing
   size, radius and fill; its content swaps behind a short blur. A cursor
   drives every change.
 
-  The whole frame is a pure function of time: window.seek(t). No CSS
-  transitions, no timers, no state carried between seeks. Every animated value
-  is a sum of closed-form springs, one spring per change, evaluated on the
-  circle (the previous loop's tails are included), so the last frame flows
-  into the first, cursor position and velocity included.
+    logo → Home (tour) → + → valor → categoria → salvar → loader → ✓
+    → saldo → gráfico → Previsibilidade (+ receita) → Home → lime → logo
+
+  The frame is a pure function of time: window.seek(t). No CSS transitions,
+  no timers, no state carried between seeks. Every animated value is its
+  starting value plus one closed-form spring per change.
 
   Event times come from the measured beat grid (audio/timeline.json, injected
   below by tools/inject.py). Open with ?t=3.2 to inspect a frame, ?play to
@@ -28,33 +29,80 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--page)}
 body{font-family:"Inter Tight",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1}
 svg{display:block}
 .ico{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.abs{position:absolute}
 
 #canvas{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--page)}
 #camera{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 940px}
 #box{position:absolute;overflow:hidden;box-shadow:0 1px 2px rgba(17,23,8,.05),0 30px 70px -26px rgba(17,23,8,.22)}
 .L{position:absolute;left:50%;top:50%;visibility:hidden}
+.full{width:1080px;height:1920px;margin:-960px 0 0 -540px}
 
-/* ticker (typed amount, odometers) */
+/* ticker (typed amounts, odometers) */
 .tick{display:inline-flex;align-items:flex-start}
 .slot{display:inline-block;height:1.1em;line-height:1.1em;overflow:hidden;text-align:center;flex:none}
 .strip{display:flex;flex-direction:column}
 .strip span{height:1.1em;line-height:1.1em}
 
+/* shared app chrome */
+.card{position:absolute;background:#fff;border-radius:56px;box-shadow:0 1px 2px rgba(17,23,8,.04),0 18px 44px -22px rgba(17,23,8,.14)}
+.pill{font-size:22px;font-weight:700;letter-spacing:.05em;border-radius:999px;padding:11px 20px}
+.pill.soft{background:var(--lime-soft)}
+.nav{position:absolute;left:44px;top:1660px;width:992px;height:200px;border-radius:64px;background:#fff;box-shadow:0 1px 2px rgba(17,23,8,.04),0 20px 50px -24px rgba(17,23,8,.18)}
+.ni{position:absolute;top:20px;width:170px;height:160px;margin-left:-85px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:28px;font-weight:500}
+.ni svg{position:relative;width:52px;height:52px}
+.ni span{position:relative}
+.ni .bg{position:absolute;inset:0;border-radius:44px;background:var(--muted);opacity:0}
+.ni.on .bg{opacity:1}
+.ni.on span{font-weight:700}
+.nplus{position:absolute;left:424px;top:28px;width:144px;height:144px;border-radius:50%;background:var(--ink);color:var(--lime);display:flex;align-items:center;justify-content:center}
+.nplus svg{width:60px;height:60px;stroke-width:2.2}
+
 /* 1 · logo */
 .fj{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:64px;letter-spacing:-.02em}
 
-/* 2 · button */
-.row{position:absolute;inset:0;display:flex;align-items:center}
-.center{justify-content:center;gap:16px}
-.between{justify-content:space-between;padding:0 60px}
-.btn-plus{width:44px;height:44px}
-.btn-label{font-size:38px;font-weight:600;letter-spacing:-.01em}
+/* 2 · Home */
+.h-scroll{position:absolute;left:0;top:0;width:1080px;height:4400px}
+.h-hello{left:44px;top:76px;font-size:66px;font-weight:700;letter-spacing:-.02em}
+.h-sub{left:44px;top:166px;font-size:34px;font-weight:500;color:var(--ink2)}
+.h-av{left:920px;top:90px;width:116px;height:116px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(17,23,8,.05),0 10px 30px -14px rgba(17,23,8,.2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700}
+.h-lab{font-size:36px;font-weight:500}
+.h-ttl{font-size:44px;font-weight:600;letter-spacing:-.01em}
+.h-big{font-size:100px;font-weight:700;letter-spacing:-.035em}
+.h-mid{font-size:80px;font-weight:700;letter-spacing:-.035em}
+.h-sm{font-size:32px;font-weight:500;color:var(--ink2)}
+.h-cap{font-size:30px;font-weight:500;color:var(--ink2)}
+.h-chip{font-size:28px;font-weight:600;background:var(--lime-soft);border-radius:999px;padding:12px 22px}
+.kpi{width:476px;height:290px;border-radius:44px}
+.kpi .k1{left:44px;top:46px;font-size:34px;font-weight:500}
+.kpi .k2{left:44px;top:104px;font-size:50px;font-weight:700;letter-spacing:-.02em}
+.kpi .k3{left:44px;top:186px;font-size:30px;font-weight:500;color:var(--ink2)}
+.prog{left:60px;top:330px;width:872px;height:24px;border-radius:12px;background:var(--muted);overflow:hidden}
+.prog i{position:absolute;left:0;top:0;bottom:0;border-radius:12px;background:var(--lime)}
+.ftrk{top:220px;width:70px;height:420px;border-radius:35px;background:var(--muted);overflow:hidden}
+.ftrk i{position:absolute;left:0;right:0;top:0;height:420px;border-radius:35px}
+.ftrk i.w{background:#fff;box-shadow:inset 0 0 0 2px var(--chip)}
+.ftrk i.k{background:var(--ink)}
+.ftrk i.l{background:var(--lime)}
+.flab{top:668px;width:70px;text-align:center;font-size:28px;font-weight:600;color:var(--ink2)}
+.vt{display:flex;align-items:center;gap:8px;font-size:30px;font-weight:500;color:var(--ink2)}
+.vt svg{width:30px;height:30px}
+.acc{left:0;right:0;height:150px}
+.acc .bk{left:60px;top:33px;width:84px;height:84px;border-radius:24px;background:var(--muted);display:flex;align-items:center;justify-content:center}
+.acc .bk svg{width:42px;height:42px}
+.acc .nm{left:172px;top:52px;font-size:36px;font-weight:500}
+.acc .am{right:60px;top:52px;font-size:36px;font-weight:700}
+.acc .sep{left:60px;right:60px;top:0;height:2px;background:var(--muted)}
+.mv{left:0;right:0;height:170px}
+.mv .nm{left:60px;top:38px;font-size:36px;font-weight:600}
+.mv .sb{left:60px;top:90px;font-size:30px;font-weight:500;color:var(--ink2)}
+.mv .am{right:60px;top:62px;font-size:36px;font-weight:700}
+.mv .sep{left:60px;right:60px;top:0;height:2px;background:var(--muted)}
 
 /* 3 · value */
 .v-top{position:absolute;left:52px;right:52px;top:46px;display:flex;justify-content:space-between;align-items:center}
-.lbl{font-size:28px;font-weight:500;color:var(--ink2)}
+.v-ttl{font-size:32px;font-weight:600;letter-spacing:-.01em}
 .chip{font-size:24px;font-weight:600;background:var(--muted);border-radius:999px;padding:10px 22px}
-.v-amount{position:absolute;left:52px;top:118px;display:flex;align-items:center;white-space:nowrap}
+.v-amount{position:absolute;left:52px;top:118px;display:flex;align-items:center;white-space:nowrap;transform-origin:0 50%}
 .v-amount .cur{font-size:52px;font-weight:600;color:var(--ink2);margin-right:18px;margin-top:14px}
 .v-amount .tick{font-size:128px;font-weight:700;letter-spacing:-.035em}
 .caret{width:6px;height:112px;border-radius:3px;background:var(--ink);margin-left:10px}
@@ -80,6 +128,9 @@ svg{display:block}
 .rw .chk{position:absolute;right:46px;width:40px;height:40px;opacity:0;stroke-width:2.4}
 
 /* 5 · confirm */
+.row{position:absolute;inset:0;display:flex;align-items:center}
+.center{justify-content:center;gap:16px}
+.between{justify-content:space-between;padding:0 60px}
 .c-l{font-size:38px;font-weight:600;letter-spacing:-.01em}
 .c-r{font-size:38px;font-weight:700;letter-spacing:-.01em}
 
@@ -95,12 +146,10 @@ svg{display:block}
 /* 8 · balance card */
 .k-head{position:absolute;left:52px;right:52px;top:50px;display:flex;justify-content:space-between;align-items:center}
 .k-t{font-size:32px;font-weight:500}
-.pill{font-size:22px;font-weight:700;letter-spacing:.05em;border-radius:999px;padding:11px 20px}
-.pill.soft{background:var(--lime-soft)}
 .k-amt{position:absolute;left:52px;top:132px;display:flex;font-size:112px;font-weight:700;letter-spacing:-.035em;white-space:nowrap;transform-origin:0 50%}
-.k-amt .rs{margin-right:.22em}
+.k-amt .rs,.g-tot .amt .rs,.p-sal .rs{margin-right:.22em}
 .k-sub{position:absolute;left:52px;top:290px;font-size:28px;font-weight:500;color:var(--ink2)}
-.k-delta{position:absolute;left:52px;top:354px;font-size:26px;font-weight:600;letter-spacing:0;background:var(--muted);border-radius:999px;padding:12px 22px;opacity:0}
+.k-delta{position:absolute;left:52px;top:354px;font-size:26px;font-weight:600;background:var(--muted);border-radius:999px;padding:12px 22px;opacity:0}
 .k-link{position:absolute;right:52px;bottom:46px;display:flex;align-items:center;gap:10px;font-size:30px;font-weight:600;color:var(--ink2)}
 .k-link svg{width:32px;height:32px}
 
@@ -108,18 +157,57 @@ svg{display:block}
 .g-t{position:absolute;left:52px;top:52px;font-size:34px;font-weight:600;letter-spacing:-.01em}
 .g-tot{position:absolute;left:52px;top:104px;display:flex;align-items:baseline;gap:18px;white-space:nowrap}
 .g-tot .amt{display:flex;font-size:80px;font-weight:700;letter-spacing:-.035em}
-.g-tot .amt .rs{margin-right:.22em}
 .g-sub{font-size:26px;font-weight:500;color:var(--ink2)}
-.g-plus{position:absolute;right:52px;top:48px;width:92px;height:92px;border-radius:50%;background:var(--lime);display:flex;align-items:center;justify-content:center}
-.g-plus svg{width:42px;height:42px;stroke-width:2}
+.g-fc{position:absolute;right:52px;top:50px;height:84px;padding:0 24px 0 30px;border-radius:42px;background:var(--lime);display:flex;align-items:center;gap:10px;font-size:30px;font-weight:600}
+.g-fc svg{width:32px;height:32px;stroke-width:2.2}
 .gtrk{position:absolute;top:300px;width:112px;height:470px;border-radius:56px;background:var(--muted);overflow:hidden}
 .bar{position:absolute;left:0;right:0;top:0;height:470px;border-radius:56px;background:var(--ink)}
 .blab{position:absolute;top:796px;width:112px;text-align:center;font-size:24px;font-weight:600;color:var(--ink2)}
-.tip{position:absolute;width:300px;background:var(--ink);color:#fff;border-radius:22px;padding:18px 24px;opacity:0}
+.tip{position:absolute;background:var(--ink);color:#fff;border-radius:22px;padding:18px 24px;opacity:0}
 .tip b{display:block;font-size:30px;font-weight:600}
 .tip .l2{overflow:hidden}
-.tip i{display:block;font-style:normal;font-size:26px;font-weight:600;color:var(--lime);padding-top:6px}
-.tip .nub{position:absolute;left:50%;bottom:-9px;width:22px;height:22px;margin-left:-11px;background:var(--ink);border-radius:4px;transform:rotate(45deg)}
+.tip i{display:block;font-style:normal;font-size:26px;font-weight:600;color:var(--lime);padding-top:6px;white-space:nowrap}
+.tip .nub{position:absolute;width:22px;height:22px;margin-left:-11px;background:var(--ink);border-radius:4px;transform:rotate(45deg)}
+#tip{width:300px}
+#tip .nub{left:50%;bottom:-9px}
+
+/* 10 · Previsibilidade */
+.pc{left:44px;top:80px;width:992px;height:1480px;overflow:hidden}
+.p-btn{top:35px;width:100px;height:100px;border-radius:50%;background:var(--muted);display:flex;align-items:center;justify-content:center}
+.p-btn svg{width:44px;height:44px}
+.p-month{left:0;right:0;top:0;height:170px;display:flex;align-items:center;justify-content:center;gap:34px;font-size:58px;font-weight:700;letter-spacing:-.02em}
+.p-month svg{width:40px;height:40px;stroke-width:2.2}
+.p-rule{left:0;right:0;top:170px;height:2px;background:var(--muted)}
+.p-filter{left:0;right:0;top:172px;height:108px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;font-size:26px;font-weight:500;color:var(--ink2)}
+.p-pill{display:flex;align-items:center;gap:12px;background:var(--muted);border-radius:999px;padding:14px 22px;font-size:26px;font-weight:600;color:var(--ink)}
+.p-pill svg{width:28px;height:28px}
+.p-day{left:0;right:0;height:400px}
+.p-dcol{left:0;top:0;bottom:0;width:140px;background:var(--muted)}
+.p-scol{left:636px;right:0;top:0;bottom:0;background:var(--muted);overflow:hidden}
+.p-today .p-dcol,.p-today .p-scol{background:var(--lime-soft)}
+.p-acc{left:0;top:0;bottom:0;width:8px;background:var(--lime)}
+.p-dn{left:0;width:140px;top:30px;text-align:center;font-size:46px;font-weight:500}
+.p-today .p-dn{font-weight:700}
+.p-flash{inset:0;background:var(--lime-soft);opacity:0}
+.p-sal{right:40px;top:30px;font-size:42px;font-weight:700;letter-spacing:-.02em;display:flex}
+.p-rows{left:140px;width:496px;top:0;bottom:0;background:#fff}
+.p-row{left:0;right:0;height:80px;border-bottom:2px solid var(--muted)}
+.p-hl{inset:0;background:var(--muted);opacity:0}
+.p-act{inset:0;background:var(--lime-soft);box-shadow:inset 6px 0 0 var(--lime);opacity:0}
+.p-chip{left:20px;top:14px;width:52px;height:52px;border-radius:50%;background:var(--muted);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.p-chip svg{width:26px;height:26px;stroke-width:2.4}
+.p-lab{left:92px;top:24px;font-size:26px;font-weight:500;color:var(--ink2)}
+.p-amt{right:28px;top:22px;font-size:28px;font-weight:500;color:var(--ink2);display:flex;white-space:nowrap}
+.p-amt.on{color:var(--ink);font-weight:600}
+#ptip{width:470px}
+#ptip .nub{right:79px;top:-9px}
+#reveal{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--lime);visibility:hidden}
+
+/* 11 · end card */
+.e-wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
+.e-tile{width:210px;height:210px;border-radius:58px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:700;letter-spacing:-.02em}
+.e-word{margin-top:64px;font-size:112px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.e-tag{margin-top:30px;font-size:36px;font-weight:500;color:rgba(17,23,8,.72)}
 
 #cursor{position:absolute;left:0;top:0;width:58px;height:86px;transform-origin:3px 3px;filter:drop-shadow(0 3px 4px rgba(17,23,8,.28))}
 </style>
@@ -133,15 +221,57 @@ svg{display:block}
     <div class="fj" id="fj">FJ</div>
    </div>
 
-   <div class="L" id="L-btn" style="width:540px;height:124px;margin:-62px 0 0 -270px">
-    <div class="row center">
-     <svg class="ico btn-plus" id="btn-plus" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg>
-     <span class="btn-label">Novo lançamento</span>
+   <div class="L full" id="L-home">
+    <div class="h-scroll" id="h-scroll">
+     <div class="abs h-hello">Bom dia, Jack</div>
+     <div class="abs h-sub">Seu mês em uma visão rápida.</div>
+     <div class="abs h-av">JL</div>
+
+     <div class="card" id="hc-saldo" style="left:44px;top:300px;width:992px;height:500px">
+      <div class="abs h-lab" style="left:60px;top:70px">Saldo operacional</div>
+      <div class="abs pill soft" style="right:60px;top:62px">SETEMBRO</div>
+      <div class="abs h-big" style="left:60px;top:146px">R$ 4.820,35</div>
+      <div class="abs h-sm" style="left:60px;top:292px">Disponível nas contas operacionais</div>
+      <div class="abs h-chip" style="left:60px;top:368px">+ 8,4% vs. mês anterior</div>
+     </div>
+
+     <div class="card kpi" id="kpi0" style="left:44px;top:840px"><div class="abs k1">Entradas</div><div class="abs k2">R$ 3.806,42</div><div class="abs k3">confirmadas</div></div>
+     <div class="card kpi" id="kpi1" style="left:560px;top:840px"><div class="abs k1">Saídas</div><div class="abs k2">R$ 1.810,39</div><div class="abs k3">compromissos</div></div>
+     <div class="card kpi" id="kpi2" style="left:44px;top:1170px"><div class="abs k1">Diário</div><div class="abs k2">R$ 708,16</div><div class="abs k3">gastos do mês</div></div>
+     <div class="card kpi" id="kpi3" style="left:560px;top:1170px"><div class="abs k1">Investido</div><div class="abs k2">R$ 500,00</div><div class="abs k3">meta mensal</div></div>
+
+     <div class="card" style="left:44px;top:1500px;width:992px;height:500px">
+      <div class="abs h-ttl" style="left:60px;top:62px">Previsibilidade</div>
+      <svg class="ico abs" viewBox="0 0 24 24" style="right:56px;top:66px;width:46px;height:46px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <div class="abs h-mid" style="left:60px;top:140px">R$ 2.740,18</div>
+      <div class="abs h-sm" style="left:60px;top:258px">saldo previsto no fechamento</div>
+      <div class="abs prog"><i id="h-prog"></i></div>
+      <div class="abs h-cap" style="left:60px;top:386px">68% da renda preservada</div>
+     </div>
+
+     <div class="card" id="hc-fluxo" style="left:44px;top:2040px;width:992px;height:780px">
+      <div class="abs h-ttl" style="left:60px;top:58px">Fluxo do mês</div>
+      <div class="abs h-cap" style="left:60px;top:122px">Setembro 2026</div>
+      <svg class="abs" viewBox="0 0 48 12" style="right:60px;top:70px;width:64px;height:16px;fill:var(--ink)"><circle cx="6" cy="6" r="4.5"/><circle cx="24" cy="6" r="4.5"/><circle cx="42" cy="6" r="4.5"/></svg>
+     </div>
+
+     <div class="card" style="left:44px;top:2860px;width:992px;height:640px">
+      <div class="abs h-ttl" style="left:60px;top:58px">Minhas contas</div>
+      <div class="abs vt" style="right:60px;top:68px">Ver todas<svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div id="h-acc"></div>
+     </div>
+
+     <div class="card" style="left:44px;top:3540px;width:992px;height:700px">
+      <div class="abs h-ttl" style="left:60px;top:58px">Movimentações recentes</div>
+      <div class="abs vt" style="right:60px;top:68px">Ver todas<svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div id="h-mov"></div>
+     </div>
     </div>
+    <div class="nav" id="h-nav"></div>
    </div>
 
    <div class="L" id="L-value" style="width:880px;height:400px;margin:-200px 0 0 -440px">
-    <div class="v-top"><span class="lbl">Valor</span><span class="chip">Despesa</span></div>
+    <div class="v-top"><span class="v-ttl">Novo lançamento</span><span class="chip">Despesa</span></div>
     <div class="v-amount" id="v-amount"><span class="cur">R$</span><span class="tick" id="amount"></span><span class="caret" id="caret"></span></div>
     <div class="v-bottom">
      <div class="v-flash" id="v-flash"></div>
@@ -153,10 +283,7 @@ svg{display:block}
    <div class="L" id="L-list" style="width:880px;height:800px;margin:-400px 0 0 -440px">
     <div class="l-head"><span class="ttl">Categoria</span><span class="l-amt">R$ 86,40</span></div>
     <div class="ind" id="ind"></div>
-    <div class="rw" id="row0"><span class="rico"><svg class="ico" viewBox="0 0 24 24"><path d="M3 4.6A1.6 1.6 0 0 1 4.6 3H11l10 10-8 8L3 11z"/><circle cx="7.6" cy="7.6" r="1.4"/></svg></span><span class="rtx"><b>Alimentação</b><i>4 subcategorias</i></span><svg class="ico chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg><svg class="ico chk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <div class="rw" id="row1"><span class="rico"><svg class="ico" viewBox="0 0 24 24"><path d="M3 4.6A1.6 1.6 0 0 1 4.6 3H11l10 10-8 8L3 11z"/><circle cx="7.6" cy="7.6" r="1.4"/></svg></span><span class="rtx"><b>Transporte</b><i>3 subcategorias</i></span><svg class="ico chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
-    <div class="rw" id="row2"><span class="rico"><svg class="ico" viewBox="0 0 24 24"><path d="M3 4.6A1.6 1.6 0 0 1 4.6 3H11l10 10-8 8L3 11z"/><circle cx="7.6" cy="7.6" r="1.4"/></svg></span><span class="rtx"><b>Moradia</b><i>5 subcategorias</i></span><svg class="ico chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
-    <div class="rw" id="row3"><span class="rico"><svg class="ico" viewBox="0 0 24 24"><path d="M3 4.6A1.6 1.6 0 0 1 4.6 3H11l10 10-8 8L3 11z"/><circle cx="7.6" cy="7.6" r="1.4"/></svg></span><span class="rtx"><b>Saúde</b><i>3 subcategorias</i></span><svg class="ico chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+    <div id="rows"></div>
    </div>
 
    <div class="L" id="L-confirm" style="width:760px;height:140px;margin:-70px 0 0 -380px">
@@ -182,7 +309,7 @@ svg{display:block}
    <div class="L" id="L-chart" style="width:920px;height:920px;margin:-460px 0 0 -460px">
     <div class="g-t">Diário · Setembro</div>
     <div class="g-tot"><span class="amt"><span class="rs">R$</span><span class="tick" id="total"></span></span><span class="g-sub">gastos do mês</span></div>
-    <div class="g-plus" id="g-plus"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+    <div class="g-fc" id="g-fc">Previsão<svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     <div class="gtrk" style="left:52px"><div class="bar" id="bar0"></div></div>
     <div class="gtrk" style="left:228px"><div class="bar" id="bar1"></div></div>
     <div class="gtrk" style="left:404px"><div class="bar" id="bar2"></div></div>
@@ -192,16 +319,39 @@ svg{display:block}
     <div class="tip" id="tip"><b>S4 · R$ 214,30</b><div class="l2" id="tip-l2"><i>+ R$ 86,40 hoje</i></div><div class="nub"></div></div>
    </div>
 
+   <div class="L full" id="L-prev">
+    <div class="card pc">
+     <div class="abs p-btn" style="left:40px"><svg class="ico" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></svg></div>
+     <div class="abs p-month"><svg class="ico" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>set/26<svg class="ico" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+     <div class="abs p-btn" style="right:40px;background:var(--lime-soft)"><svg class="ico" viewBox="0 0 24 24"><path d="M4 16.5a8 8 0 0 1 16 0"/><path d="M12 16.5l3.6-4.4"/></svg></div>
+     <div class="abs p-rule"></div>
+     <div class="abs p-filter"><span>dia</span><span class="p-pill"><svg class="ico" viewBox="0 0 24 24"><path d="M5 7h14M8 12h8M11 17h2"/></svg>todas<svg class="ico" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span><span>saldos</span></div>
+     <div id="p-days"></div>
+     <div class="tip" id="ptip" style="left:482px;top:1182px"><b>Saldo projetado dia a dia</b><div class="l2"><i>+ R$ 1.500,00 do dia 26 em diante</i></div><div class="nub"></div></div>
+    </div>
+    <div class="nav" id="p-nav"></div>
+   </div>
+
+   <div id="reveal"></div>
+
+   <div class="L full" id="L-end">
+    <div class="e-wrap">
+     <div class="e-tile" id="e-tile">FJ</div>
+     <div class="e-word" id="e-word">FIN JACK</div>
+     <div class="e-tag" id="e-tag">Seu dinheiro, organizado do seu jeito.</div>
+    </div>
+   </div>
+
   </div>
   <svg id="cursor" viewBox="0 0 24 36"><path d="M1.5 1.5V27.6L7.9 21.7L12.2 31.9L16.4 30.1L12.2 20.1H20.9Z" fill="#111708" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
  </div>
 </div>
 
 <script id="timeline" type="application/json">{
- "period": 16.0,
- "bpm": 120.072,
+ "duration": 24.0,
+ "bpm": 120.028,
  "beats": [
-  0.018667,
+  0.024,
   0.506667,
   1.008,
   1.506667,
@@ -211,205 +361,295 @@ svg{display:block}
   3.506667,
   4.008,
   4.506667,
-  5.008,
+  5.005333,
   5.506667,
-  6.005333,
+  6.008,
   6.506667,
   7.008,
   7.506667,
   8.008,
-  8.512,
-  9.010667,
+  8.506667,
+  9.008,
   9.506667,
   10.008,
-  10.509333,
+  10.506667,
   11.008,
-  11.509333,
+  11.506667,
   12.008,
-  12.506667,
-  13.008,
+  12.509333,
+  13.010667,
   13.509333,
   14.008,
-  14.506667,
+  14.509333,
   15.008,
-  15.509333
+  15.509333,
+  16.008,
+  16.509333,
+  17.008,
+  17.509333,
+  18.010667,
+  18.506667,
+  19.010667,
+  19.509333,
+  20.008,
+  20.509333,
+  21.008,
+  21.504431,
+  22.010667,
+  22.504201,
+  23.004085,
+  23.50397
  ],
  "events": {
-  "hoverLogo": 0.018667,
-  "unfold": 0.506667,
-  "plusSpin": 1.008,
-  "clickButton": 1.506667,
-  "key1": 2.008,
-  "key2": 2.264,
-  "key3": 2.506667,
-  "key4": 2.762667,
-  "amountLand": 3.008,
-  "clickCategory": 3.506667,
-  "rowsIn": 4.008,
-  "hoverRow": 4.506667,
-  "stretch": 5.008,
-  "selectRow": 5.506667,
-  "confirmIn": 6.005333,
-  "hoverConfirm": 6.506667,
-  "clickSave": 7.008,
-  "arcClose": 7.506667,
-  "success": 8.008,
-  "cursorToToast": 8.512,
-  "clickToast": 9.010667,
-  "rollStart": 9.506667,
-  "rollLand": 10.008,
-  "deltaIn": 10.509333,
-  "hoverLink": 11.008,
-  "clickLink": 11.509333,
-  "barsDraw": 12.008,
-  "barGrow": 12.506667,
-  "hoverBar": 13.008,
-  "tooltipLine2": 13.509333,
-  "clickPlus": 14.008,
-  "plusBack": 14.506667,
-  "cursorLeave": 15.008,
-  "logoSettle": 15.509333
+  "hoverLogo": 0.024,
+  "homeIn": 0.506667,
+  "homeCards": 1.008,
+  "saldoHover": 1.506667,
+  "scroll1": 2.008,
+  "homeBars": 2.506667,
+  "scroll2": 3.008,
+  "contasIn": 3.506667,
+  "movsIn": 4.008,
+  "scrollTop": 4.506667,
+  "plusSpin": 5.005333,
+  "clickButton": 5.506667,
+  "key1": 6.008,
+  "key2": 6.269333,
+  "key3": 6.506667,
+  "key4": 6.76,
+  "amountLand": 7.008,
+  "clickCategory": 7.506667,
+  "rowsIn": 8.008,
+  "hoverRow": 8.506667,
+  "stretch": 9.008,
+  "selectRow": 9.506667,
+  "confirmIn": 10.008,
+  "hoverConfirm": 10.506667,
+  "clickSave": 11.008,
+  "arcClose": 11.506667,
+  "success": 12.008,
+  "cursorToToast": 12.509333,
+  "clickToast": 13.010667,
+  "rollStart": 13.509333,
+  "rollLand": 14.008,
+  "deltaIn": 14.509333,
+  "hoverLink": 15.008,
+  "clickLink": 15.509333,
+  "barsDraw": 16.008,
+  "barGrow": 16.509333,
+  "hoverBar": 17.008,
+  "tooltipLine2": 17.509333,
+  "clickForecast": 18.010667,
+  "gridIn": 18.506667,
+  "hoverCell": 19.010667,
+  "clickCell": 19.509333,
+  "saldo26": 20.008,
+  "saldo27": 20.509333,
+  "hoverHome": 21.008,
+  "clickHome": 21.504431,
+  "reveal": 22.010667,
+  "wordmark": 22.504201
  },
  "sounds": [
   {
-   "t": 0.018667,
+   "t": 0.024,
    "type": "hover",
    "id": "hoverLogo"
   },
   {
    "t": 0.506667,
    "type": "pop",
-   "id": "unfold"
+   "id": "homeIn"
   },
   {
-   "t": 1.008,
+   "t": 1.506667,
+   "type": "hover",
+   "id": "saldoHover"
+  },
+  {
+   "t": 2.008,
+   "type": "swipe",
+   "id": "scroll1"
+  },
+  {
+   "t": 2.506667,
+   "type": "blip",
+   "id": "homeBars"
+  },
+  {
+   "t": 3.008,
+   "type": "swipe",
+   "id": "scroll2"
+  },
+  {
+   "t": 3.506667,
+   "type": "tick",
+   "id": "contasIn"
+  },
+  {
+   "t": 4.008,
+   "type": "tick",
+   "id": "movsIn"
+  },
+  {
+   "t": 4.506667,
+   "type": "swipe",
+   "id": "scrollTop"
+  },
+  {
+   "t": 5.005333,
    "type": "hover",
    "id": "plusSpin"
   },
   {
-   "t": 1.506667,
+   "t": 5.506667,
    "type": "click",
    "id": "clickButton"
   },
   {
-   "t": 2.008,
+   "t": 6.008,
    "type": "key",
    "id": "key1"
   },
   {
-   "t": 2.264,
+   "t": 6.269333,
    "type": "key",
    "id": "key2"
   },
   {
-   "t": 2.506667,
+   "t": 6.506667,
    "type": "key",
    "id": "key3"
   },
   {
-   "t": 2.762667,
+   "t": 6.76,
    "type": "key",
    "id": "key4"
   },
   {
-   "t": 3.008,
+   "t": 7.008,
    "type": "tick",
    "id": "amountLand"
   },
   {
-   "t": 3.506667,
+   "t": 7.506667,
    "type": "click",
    "id": "clickCategory"
   },
   {
-   "t": 4.506667,
+   "t": 8.506667,
    "type": "hover",
    "id": "hoverRow"
   },
   {
-   "t": 5.506667,
+   "t": 9.506667,
    "type": "select",
    "id": "selectRow"
   },
   {
-   "t": 6.005333,
+   "t": 10.008,
    "type": "pop",
    "id": "confirmIn"
   },
   {
-   "t": 6.506667,
+   "t": 10.506667,
    "type": "hover",
    "id": "hoverConfirm"
   },
   {
-   "t": 7.008,
+   "t": 11.008,
    "type": "click",
    "id": "clickSave"
   },
   {
-   "t": 8.008,
+   "t": 12.008,
    "type": "success",
    "id": "success"
   },
   {
-   "t": 9.010667,
+   "t": 13.010667,
    "type": "click",
    "id": "clickToast"
   },
   {
-   "t": 9.506667,
+   "t": 13.509333,
    "type": "roll",
    "id": "rollStart"
   },
   {
-   "t": 10.008,
+   "t": 14.008,
    "type": "tick",
    "id": "rollLand"
   },
   {
-   "t": 10.509333,
+   "t": 14.509333,
    "type": "pop",
    "id": "deltaIn"
   },
   {
-   "t": 11.008,
+   "t": 15.008,
    "type": "hover",
    "id": "hoverLink"
   },
   {
-   "t": 11.509333,
+   "t": 15.509333,
    "type": "click",
    "id": "clickLink"
   },
   {
-   "t": 12.506667,
+   "t": 16.509333,
    "type": "blip",
    "id": "barGrow"
   },
   {
-   "t": 13.008,
+   "t": 17.008,
    "type": "hover",
    "id": "hoverBar"
   },
   {
-   "t": 13.509333,
+   "t": 17.509333,
    "type": "tick",
    "id": "tooltipLine2"
   },
   {
-   "t": 14.008,
+   "t": 18.010667,
    "type": "click",
-   "id": "clickPlus"
+   "id": "clickForecast"
   },
   {
-   "t": 14.506667,
+   "t": 18.506667,
+   "type": "pop",
+   "id": "gridIn"
+  },
+  {
+   "t": 19.010667,
    "type": "hover",
-   "id": "plusBack"
+   "id": "hoverCell"
   },
   {
-   "t": 15.008,
-   "type": "fold",
-   "id": "cursorLeave"
+   "t": 19.509333,
+   "type": "select",
+   "id": "clickCell"
+  },
+  {
+   "t": 20.008,
+   "type": "blip",
+   "id": "saldo26"
+  },
+  {
+   "t": 20.509333,
+   "type": "blip2",
+   "id": "saldo27"
+  },
+  {
+   "t": 21.008,
+   "type": "hover",
+   "id": "hoverHome"
+  },
+  {
+   "t": 21.504431,
+   "type": "click",
+   "id": "clickHome"
   }
  ]
 }</script>
@@ -417,10 +657,10 @@ svg{display:block}
 (() => {
 'use strict';
 const TL = JSON.parse(document.getElementById('timeline').textContent);
-const P = TL.period;
+const D = TL.duration;
 const E = TL.events;
 const $ = s => document.querySelector(s);
-const mod = t => ((t % P) + P) % P;
+const clampT = t => Math.min(D, Math.max(0, t));
 
 // ---------------------------------------------------------------- springs --
 // Step response of a damped spring released from rest: 0 → 1, zero initial
@@ -432,19 +672,14 @@ function S(tau, w, z) {
   return 1 - Math.exp(-z * w * tau) * (Math.cos(wd * tau) + (z * w / wd) * Math.sin(wd * tau));
 }
 
-// A value with many targets = sum of one spring per change. keys: [t, value, ω?, ζ?].
-// Evaluated on the circle: the previous loop's springs are added as (S − 1),
-// which is 0 once settled and carries their tails across the loop point.
-function track(keys, w = 13, z = 0.85) {
-  const k = keys.map(([t, v, ww, zz]) => [mod(t), v, ww ?? w, zz ?? z]).sort((a, b) => a[0] - b[0]);
-  const n = k.length, base = k[n - 1][1];
-  const d = k.map(([t, v, ww, zz], i) => [t, v - k[(i - 1 + n) % n][1], ww, zz]).filter(x => x[1] !== 0);
-  return t => {
-    t = mod(t);
-    let v = base;
-    for (const [ti, dv, ww, zz] of d) v += dv * (S(t - ti, ww, zz) + S(t - ti + P, ww, zz) - 1);
-    return v;
-  };
+// A value with many targets = its starting value + one spring per change.
+// keys: [t, value, ω?, ζ?]
+function track(init, keys, w = 13, z = .85) {
+  const k = keys.map(([t, v, ww, zz]) => [t, v, ww ?? w, zz ?? z]).sort((a, b) => a[0] - b[0]);
+  const d = [];
+  let prev = init;
+  for (const [t, v, ww, zz] of k) { if (v !== prev) d.push([t, v - prev, ww, zz]); prev = v; }
+  return t => { let v = init; for (const [ti, dv, ww, zz] of d) v += dv * S(t - ti, ww, zz); return v; };
 }
 
 // ------------------------------------------------------------------ color --
@@ -468,18 +703,19 @@ function css([L, a, b]) {
   const f = c => Math.round(255 * Math.min(1, Math.max(0, gam(Math.max(0, c)))));
   return `rgb(${f(4.0767416621 * l - 3.3077115913 * m + .2309699292 * s)},${f(-1.2684380046 * l + 2.6097574011 * m - .3413193965 * s)},${f(-.0041960863 * l - .7034186147 * m + 1.7076147010 * s)})`;
 }
-function colorTrack(keys, w = 16, z = 1) {
-  const ch = [0, 1, 2].map(i => track(keys.map(([t, hex]) => [t, lab(hex)[i]]), w, z));
+function colorTrack(init, keys, w = 16, z = 1) {
+  const ch = [0, 1, 2].map(i => track(lab(init)[i], keys.map(([t, hex, ww, zz]) => [t, lab(hex)[i], ww, zz]), w, z));
   return t => css(ch.map(f => f(t)));
 }
 
 // ----------------------------------------------------------------- ticker --
 // Right-aligned character slots. 'slide': old glyph leaves up, new enters from
 // below (typing). 'roll': each digit wheel spins to its new value (odometer).
+// The first key is simply set (it is what the state shows when it appears).
 class Ticker {
   constructor(el, keys, opt) {
     this.o = Object.assign({ mode: 'slide', w: 24, z: .9, stagger: 0 }, opt);
-    this.keys = keys.map(([t, s]) => [mod(t), s]).sort((a, b) => a[0] - b[0]);
+    this.keys = keys.slice().sort((a, b) => a[0] - b[0]);
     this.n = Math.max(...this.keys.map(k => k[1].length));
     const probe = document.createElement('span');
     el.appendChild(probe);
@@ -497,18 +733,17 @@ class Ticker {
   cw(c) { return c === '' ? 0 : c === ',' ? this.wComma : c === '.' ? this.wDot : this.wDigit; }
   at(s, j) { const i = s.length - 1 - j; return i >= 0 ? s[i] : ''; }
   render(t) {
-    t = mod(t);
-    const K = this.keys, m = K.length;
-    let k = m - 1;
-    for (let i = 0; i < m; i++) if (K[i][0] <= t) k = i;
-    const tau = mod(t - K[k][0]);
-    const cur = K[k][1], prev = K[(k - 1 + m) % m][1];
+    const K = this.keys;
+    let k = 0;
+    for (let i = 0; i < K.length; i++) if (K[i][0] <= t) k = i;
+    const tau = t - K[k][0];
+    const cur = K[k][1], prev = K[Math.max(0, k - 1)][1];
     for (let j = 0; j < this.n; j++) {
       const a = this.at(prev, j), b = this.at(cur, j), sl = this.slots[j];
       const p = a === b ? 1 : S(tau - this.o.stagger * (this.n - 1 - j), this.o.w, this.o.z);
       // settled slots hold a single glyph: a hidden neighbour's comma tail
       // would otherwise peek in at the top of the slot
-      const settled = a === b || p > .999 || k === 0;   // first key: set when the layer appears
+      const settled = a === b || p > .999 || k === 0;
       let seq = settled ? [b] : [a, b];
       if (!settled && this.o.mode === 'roll' && /\d/.test(a) && /\d/.test(b)) {
         const A = +a, B = +b, up = (B - A + 10) % 10 <= 5;
@@ -520,11 +755,9 @@ class Ticker {
         sl.strip.innerHTML = seq.map(c => `<span>${c || '&nbsp;'}</span>`).join('');
         sl.sig = sig;
       }
-      const steps = seq.length - 1;
-      const pos = settled ? 0 : p * steps;
+      const pos = settled ? 0 : p * (seq.length - 1);
       sl.strip.style.transform = `translateY(${(-pos * 1.1).toFixed(4)}em)`;
-      const moving = !settled;
-      const blur = moving ? Math.sin(Math.PI * Math.min(1, p)) * (this.o.mode === 'roll' ? 3 : 2) : 0;
+      const blur = settled ? 0 : Math.sin(Math.PI * Math.min(1, p)) * (this.o.mode === 'roll' ? 3 : 2);
       sl.strip.style.filter = blur > .05 ? `blur(${blur.toFixed(2)}px)` : 'none';
       const wa = this.cw(a), wb = this.cw(b);
       sl.slot.style.width = (settled ? wb : wa + (wb - wa) * Math.min(1, Math.max(0, p))).toFixed(3) + 'px';
@@ -533,140 +766,239 @@ class Ticker {
 }
 
 // ------------------------------------------------------------ the states --
-const CX = 540, CY = 940;
-const ST = { //        w    h    r   fill
-  logo:    [168, 168, 46, '#111708'],
-  btn:     [540, 124, 62, '#AFF64E'],
-  value:   [880, 400, 44, '#FFFFFF'],
-  list:    [880, 800, 48, '#FFFFFF'],
-  confirm: [760, 140, 70, '#AFF64E'],
-  loader:  [176, 176, 88, '#111708'],
-  toast:   [620, 140, 70, '#AFF64E'],
-  card:    [880, 560, 48, '#FFFFFF'],
-  chart:   [920, 920, 48, '#FFFFFF'],
+const CX = 540;
+const ST = { //        w     h     r   fill        cy
+  logo:    [168,  168,  46, '#111708', 940],
+  home:    [1080, 1920,  0, '#F7F7F6', 960],
+  value:   [880,  400,  44, '#FFFFFF', 940],
+  list:    [880,  800,  48, '#FFFFFF', 940],
+  confirm: [760,  140,  70, '#AFF64E', 940],
+  loader:  [176,  176,  88, '#111708', 940],
+  toast:   [620,  140,  70, '#AFF64E', 940],
+  card:    [880,  560,  48, '#FFFFFF', 940],
+  chart:   [920,  920,  48, '#FFFFFF', 940],
+  prev:    [1080, 1920,  0, '#F7F7F6', 960],
+  end:     [1080, 1920,  0, '#AFF64E', 960],
 };
-// Every morph is triggered by the cursor (hover, click) or is the direct result
-// of the click before it (select → confirm, save → success).
+// Every morph is triggered by the cursor (hover, drag, click) or is the direct
+// result of the click before it (select → confirm, save → success).
 const MORPHS = [
-  [E.unfold, 'btn'], [E.clickButton, 'value'], [E.clickCategory, 'list'],
+  [E.homeIn, 'home'], [E.clickButton, 'value'], [E.clickCategory, 'list'],
   [E.confirmIn, 'confirm'], [E.clickSave, 'loader'], [E.success, 'toast'],
-  [E.clickToast, 'card'], [E.clickLink, 'chart'], [E.clickPlus, 'btn'], [E.cursorLeave, 'logo'],
+  [E.clickToast, 'card'], [E.clickLink, 'chart'], [E.clickForecast, 'prev'], [E.reveal + .08, 'end'],
 ];
-const boxW = track(MORPHS.map(([t, s]) => [t, ST[s][0]]), 13, .86);
-const boxH = track(MORPHS.map(([t, s]) => [t, ST[s][1]]), 13, .86);
-const boxR = track(MORPHS.map(([t, s]) => [t, ST[s][2]]), 13, .86);
-const boxFill = colorTrack(MORPHS.map(([t, s]) => [t, ST[s][3]]), 19, 1);
-const boxS = track([
-  [E.hoverLogo, 1.06], [E.unfold, 1],
-  [E.plusSpin, 1.025], [E.clickButton - .05, .97], [E.clickButton + .04, 1],
+const geo = i => track(ST.logo[i], MORPHS.map(([t, s]) => [t, ST[s][i]]), 13, .86);
+const boxW = geo(0), boxH = geo(1), boxR = geo(2), boxCY = geo(4);
+// opening into a full screen: the ink → page change runs faster so the
+// growing tile never sits in mid grey
+const boxFill = colorTrack(ST.logo[3], MORPHS.map(([t, s]) => [t, ST[s][3], ST[s][1] === 1920 ? 30 : 19]), 19, 1);
+const boxS = track(1, [
+  [E.hoverLogo, 1.06], [E.homeIn, 1],
   [E.hoverConfirm, 1.03], [E.clickSave - .05, .97], [E.clickSave + .04, 1],
   [E.cursorToToast + .1, 1.025], [E.clickToast - .05, .97], [E.clickToast + .04, 1],
-  [E.plusBack, 1.025], [E.cursorLeave, 1],
-  [E.logoSettle, 1.025], [E.logoSettle + .12, 1],
 ], 22, .82);
 
 // Content enters after its morph starts and leaves before the next one.
 const IN = .08, OUT = .07;
+const layer = (inT, outT) => track(inT === null ? 1 : 0, [
+  ...(inT === null ? [] : [[inT + IN, 1, 20, 1]]),
+  ...(outT === null ? [] : [[outT - OUT, 0, 34, 1]]),
+]);
 const LAYERS = {
-  logo: [[E.cursorLeave, E.unfold]],
-  btn: [[E.unfold, E.clickButton], [E.clickPlus, E.cursorLeave]],
-  value: [[E.clickButton, E.clickCategory]],
-  list: [[E.clickCategory, E.confirmIn]],
-  confirm: [[E.confirmIn, E.clickSave]],
-  loader: [[E.clickSave, E.success]],
-  toast: [[E.success, E.clickToast]],
-  card: [[E.clickToast, E.clickLink]],
-  chart: [[E.clickLink, E.clickPlus]],
+  logo: layer(null, E.homeIn),
+  home: layer(E.homeIn, E.clickButton),
+  value: layer(E.clickButton, E.clickCategory),
+  list: layer(E.clickCategory, E.confirmIn),
+  confirm: layer(E.confirmIn, E.clickSave),
+  loader: layer(E.clickSave, E.success),
+  toast: layer(E.success, E.clickToast),
+  card: layer(E.clickToast, E.clickLink),
+  chart: layer(E.clickLink, E.clickForecast),
+  prev: layer(E.clickForecast, E.reveal + .35),
+  end: track(0, [[E.reveal + .02, 1, 16, 1]]),
 };
-const layerO = {};
-for (const [id, iv] of Object.entries(LAYERS))
-  layerO[id] = track(iv.flatMap(([a, b]) => [[a + IN, 1, 20, 1], [b - OUT, 0, 34, 1]]));
 
 // Cursor: one spring per move, timed to land on the event.
 const CUR = [
-  [E.unfold + .12, 778, 984],          // to the button
-  [E.clickButton + .14, 935, 1215],    // out of the way while typing
-  [E.clickCategory - .42, 905, 1082],  // "Selecionar ›"
-  [E.hoverRow - .32, 795, 1052],       // hover Moradia
-  [E.stretch, 795, 744],               // up to Alimentação
-  [E.confirmIn + .08, 880, 986],       // onto "Salvar lançamento"
-  [E.clickSave + .14, 905, 1110],      // aside while it saves
-  [E.cursorToToast - .12, 805, 986],   // onto the toast
-  [E.clickToast + .16, 950, 1290],     // aside while the balance rolls
-  [E.hoverLink - .36, 913, 1162],      // "Ver gastos →"
-  [E.hoverBar - .40, 735, 1120],       // onto bar S4
-  [E.clickPlus - .36, 906, 572],       // chart "+"
-  [E.plusBack - .30, 778, 984],        // back on the button
-  [E.cursorLeave - .02, 905, 1140],    // leaves → the button folds into FJ
-  [E.logoSettle + .05, 604, 1004],     // returns to FJ, lands on the loop point
+  [-.3, 604, 1004],                     // onto FJ
+  [E.homeIn + .1, 860, 640],            // over the balance card
+  [E.scroll1 - .04, 860, 330],          // drag ↑
+  [E.scroll1 + .42, 860, 1150],         // reposition
+  [E.scroll2 - .04, 860, 760],          // drag ↑
+  [E.scroll2 + .36, 900, 760],
+  [E.movsIn + .08, 900, 700],
+  [E.scrollTop - .04, 900, 1110],       // fling ↓ back to the top
+  [E.scrollTop + .22, 556, 1778],       // onto "+"
+  [E.clickButton + .14, 935, 1215],     // out of the way while typing
+  [E.clickCategory - .42, 905, 1082],   // "Selecionar ›"
+  [E.hoverRow - .32, 795, 1052],        // hover Moradia
+  [E.stretch, 795, 744],                // up to Alimentação
+  [E.confirmIn + .08, 880, 986],        // onto "Salvar lançamento"
+  [E.clickSave + .14, 905, 1110],       // aside while it saves
+  [E.cursorToToast - .12, 805, 986],    // onto the toast
+  [E.clickToast + .16, 950, 1290],      // aside while the balance rolls
+  [E.hoverLink - .36, 913, 1162],       // "Ver gastos →"
+  [E.hoverBar - .40, 735, 1120],        // onto bar S4
+  [E.tooltipLine2 + .06, 905, 588],     // "Previsão →"
+  [E.gridIn + .04, 612, 806],           // day 26 · entradas
+  [E.clickCell + .16, 330, 1110],       // aside
+  [E.saldo27 + .12, 172, 1752],         // Home
 ];
-const curX = track(CUR.map(([t, x]) => [t, x]), 11, .95);
-const curY = track(CUR.map(([t, , y]) => [t, y]), 11, .95);
-const CLICKS = [E.clickButton, E.clickCategory, E.selectRow, E.clickSave, E.clickToast, E.clickLink, E.clickPlus];
-const curS = track(CLICKS.flatMap(t => [[t - .06, .86], [t + .05, 1]]), 40, .9);
+const curX = track(700, CUR.map(([t, x]) => [t, x]), 11, .95);
+const curY = track(1130, CUR.map(([t, , y]) => [t, y]), 11, .95);
+const CLICKS = [E.clickButton, E.clickCategory, E.selectRow, E.clickSave, E.clickToast, E.clickLink, E.clickForecast, E.clickCell, E.clickHome];
+const DRAGS = [E.scroll1, E.scroll2, E.scrollTop];
+const curS = track(1, [
+  ...CLICKS.flatMap(t => [[t - .06, .86], [t + .05, 1]]),
+  ...DRAGS.flatMap(t => [[t - .06, .86, 40, .9], [t + .3, 1, 30, .9]]),
+], 40, .9);
+const curO = track(1, [[E.clickHome + .28, 0, 14, 1]]);
 
-// Camera: push in while typing, a breath on success.
-const camS = track([[E.clickButton + .04, 1.07], [E.clickCategory + .02, 1], [E.success, 1.035], [E.clickToast, 1]], 5.5, 1);
+// Camera: push in while typing, a breath on success, a slow push on the logo.
+const camS = track(1, [[E.clickButton + .04, 1.07], [E.clickCategory + .02, 1], [E.success, 1.035], [E.clickToast, 1],
+  [E.reveal + .02, 1.045, 1.1, 1]], 5.5, 1);
 
-// --- inside the states
-const fjLS = track([[E.hoverLogo, .05], [E.cursorLeave, -.02]], 14, .9);
-const plusRot = track([[E.plusSpin, 90], [E.plusBack, 0]], 14, .8);
-const amtPulse = track([[E.amountLand, 1.035], [E.amountLand + .1, 1]], 24, .85);
-const selFlash = track([[E.clickCategory - .06, 1], [E.clickCategory + .08, 0]], 30, 1);
+// --- Home tour
+const SCROLL1 = 1390, SCROLL2 = 2750;
+const hScroll = track(0, [[E.scroll1, SCROLL1, 7.5, 1], [E.scroll2, SCROLL2, 7.5, 1], [E.scrollTop, 0, 8, 1]]);
+const kpiO = [0, 1, 2, 3].map(i => track(0, [[E.homeCards + i * .06, 1, 18, 1]]));
+const saldoLift = track(1, [[E.saldoHover, 1.015], [E.scroll1 - .06, 1]], 20, .85);
+const hProg = track(0, [[E.homeBars, .68, 8, 1]]);
+const FLUXO = [[.44, 'k'], [.63, 'w'], [.53, 'w'], [.81, 'k'], [.58, 'w'], [.87, 'l'], [.72, 'k']];
+const fluxoH = FLUXO.map(([f], i) => track(0, [[E.homeBars + i * .05, f * 420, 12, .86]]));
+const ACCOUNTS = [['Banco Inter', 'R$ 2.430,80'], ['Itaú', 'R$ 1.120,35'], ['Mercado Pago', 'R$ 945,20']];
+const accO = ACCOUNTS.map((_, i) => track(0, [[E.contasIn + i * .07, 1, 18, 1]]));
+const MOVES = [['Aporte mensal', 'Investimentos · Inter', '− R$ 500,00'], ['Salário', 'Receita · Itaú', '+ R$ 3.806,42'], ['Internet', 'Moradia · Conta', '− R$ 79,90']];
+const movO = MOVES.map((_, i) => track(0, [[E.movsIn + i * .07, 1, 18, 1]]));
+const plusS = track(1, [[E.plusSpin, 1.08], [E.clickButton - .12, .92], [E.clickButton + .04, 1]], 22, .82);
+const plusRot = track(0, [[E.plusSpin, 90]], 14, .8);
+
+// --- task
+const fjLS = track(-.02, [[E.hoverLogo, .05]], 14, .9);
+const amtPulse = track(1, [[E.amountLand, 1.035], [E.amountLand + .1, 1]], 24, .85);
+const selFlash = track(0, [[E.clickCategory - .06, 1], [E.clickCategory + .08, 0]], 30, 1);
 const ROW_TOP = i => 124 + i * 156, ROW_H = 148;
-const rowO = [0, 1, 2, 3].map(i => track([[E.rowsIn + i * .06, 1, 18, 1], [E.cursorLeave, 0, 30, 1]]));
+const rowO = [0, 1, 2, 3].map(i => track(0, [[E.clickCategory + .14 + i * .09, 1, 18, 1]]));
 // tab indicator: leading edge (top, moving up) on a stiffer spring than the trailing edge → it stretches
-const indTop = track([[E.clickCategory, ROW_TOP(2)], [E.stretch + .06, ROW_TOP(0), 21, .9]], 21, .9);
-const indBot = track([[E.clickCategory, ROW_TOP(2) + ROW_H], [E.stretch + .06, ROW_TOP(0) + ROW_H, 9, .9]], 9, .9);
-const indO = track([[E.hoverRow, 1, 22, 1], [E.cursorLeave, 0, 30, 1]]);
-const indFill = colorTrack([[E.selectRow, '#EAFBD8'], [E.cursorLeave, '#F2F3F0']], 18, 1);
-const indS = track([[E.selectRow - .05, .975], [E.selectRow + .05, 1]], 30, .85);
-const chkO = track([[E.selectRow + .02, 1, 22, .9], [E.cursorLeave, 0, 30, 1]]);
+const indTop = track(ROW_TOP(2), [[E.stretch + .06, ROW_TOP(0), 21, .9]]);
+const indBot = track(ROW_TOP(2) + ROW_H, [[E.stretch + .06, ROW_TOP(0) + ROW_H, 9, .9]]);
+const indO = track(0, [[E.hoverRow, 1, 22, 1]]);
+const indFill = colorTrack('#F2F3F0', [[E.selectRow, '#EAFBD8']], 18, 1);
+const indS = track(1, [[E.selectRow - .05, .975], [E.selectRow + .05, 1]], 30, .85);
+const chkO = track(0, [[E.selectRow + .02, 1, 22, .9]]);
 const ARC = 2 * Math.PI * 44;
-const arcP = track([[E.clickSave, .16, 10, 1], [E.arcClose, 1, 7.5, 1], [E.cursorLeave, .16, 30, 1]]);
-const tChk = track([[E.success + .05, 1, 13, 1], [E.cursorLeave, 0, 30, 1]]);
-const tChkS = track([[E.cursorToToast, 1.12], [E.cursorToToast + .1, 1]], 24, .8);
-const saldoPulse = track([[E.rollLand, 1.02], [E.rollLand + .1, 1]], 24, .85);
-const deltaO = track([[E.deltaIn, 1, 18, 1], [E.cursorLeave, 0, 30, 1]]);
-const linkH = track([[E.hoverLink, 1, 20, 1], [E.clickLink + .25, 0, 20, 1]]);
+const arcP = track(.16, [[E.arcClose, 1, 7.5, 1]]);
+const tChk = track(0, [[E.success + .05, 1, 13, 1]]);
+const tChkS = track(1, [[E.cursorToToast, 1.12], [E.cursorToToast + .1, 1]], 24, .8);
+const saldoPulse = track(1, [[E.rollLand, 1.02], [E.rollLand + .1, 1]], 24, .85);
+const deltaO = track(0, [[E.deltaIn, 1, 18, 1]]);
+const linkH = track(0, [[E.hoverLink, 1, 20, 1], [E.clickLink + .25, 0, 20, 1]]);
 const TRACK_H = 470, MAXV = 240;
 const BAR = [198.74, 176.52, 205.00];
-const barH = BAR.map((v, i) => track([[E.barsDraw + i * .06, v / MAXV * TRACK_H, 12, .86], [E.cursorLeave, 0, 30, 1]]));
-const s4H = track([[E.barsDraw + .18, 127.90 / MAXV * TRACK_H, 12, .86], [E.barGrow, 214.30 / MAXV * TRACK_H, 11, .85], [E.cursorLeave, 0, 30, 1]]);
-const s4Fill = colorTrack([[E.barGrow, '#AFF64E'], [E.cursorLeave, '#111708']], 16, 1);
-const tipO = track([[E.hoverBar, 1, 20, 1], [E.clickPlus - OUT, 0, 34, 1]]);
-const tip2 = track([[E.tooltipLine2, 1, 18, .9], [E.clickPlus - OUT, 0, 34, 1]]);
-const gPlusS = track([[E.clickPlus - .06, .88], [E.clickPlus + .05, 1]], 34, .85);
+const barH = BAR.map((v, i) => track(0, [[E.barsDraw + i * .06, v / MAXV * TRACK_H, 12, .86]]));
+const s4H = track(0, [[E.barsDraw + .18, 127.90 / MAXV * TRACK_H, 12, .86], [E.barGrow, 214.30 / MAXV * TRACK_H, 11, .85]]);
+const s4Fill = colorTrack('#111708', [[E.barGrow, '#AFF64E']], 16, 1);
+const tipO = track(0, [[E.hoverBar, 1, 20, 1]]);
+const tip2 = track(0, [[E.tooltipLine2, 1, 18, .9]]);
+const fcS = track(1, [[E.clickForecast - .06, .93], [E.clickForecast + .05, 1]], 34, .85);
+
+// --- Previsibilidade
+const FLOWS = [['in', 'entradas'], ['out', 'saídas'], ['D', 'diário'], ['E', 'economias'], ['C', 'cartão']];
+const DAYS = [
+  { d: 25, today: true, saldo: '4.733,95', amts: ['0,00', '0,00', '86,40', '0,00', '0,00'] },
+  { d: 26, saldo: '4.486,10', amts: ['0,00', '247,85', '0,00', '0,00', '0,00'] },
+  { d: 27, saldo: '4.486,10', amts: ['0,00', '0,00', '0,00', '0,00', '0,00'] },
+];
+const dayO = DAYS.map((_, i) => track(0, [[E.gridIn - .25 + i * .09, 1, 18, 1]]));
+const cellHl = track(0, [[E.hoverCell, 1, 22, 1], [E.clickCell, 0, 30, 1]]);
+const cellAct = track(0, [[E.clickCell, 1, 22, 1]]);
+const cellInk = colorTrack('#6B7067', [[E.clickCell, '#111708']], 20, 1);
+const flash = [E.saldo26, E.saldo27].map(t => track(0, [[t, 1, 26, 1], [t + .4, 0, 8, 1]]));
+const ptipO = track(0, [[E.saldo27 + .05, 1, 20, 1]]);
+const homeHv = track(0, [[E.hoverHome, 1, 22, 1]]);
+const homeS = track(1, [[E.clickHome - .06, .92], [E.clickHome + .05, 1]], 34, .85);
+const REVEAL = { x: 162, y: 1738 };
+const revealR = track(0, [[E.clickHome + .02, 2250, 9.5, 1]]);
+
+// --- end card
+const tileS = track(.82, [[E.reveal, 1, 12, .78]]);
+const wordO = track(0, [[E.wordmark, 1, 16, 1]]);
+const tagO = track(0, [[E.wordmark + .12, 1, 16, 1]]);
 
 // ------------------------------------------------------------------ build --
+const ICON = {
+  home: '<path d="M4 10.6 12 4l8 6.6V20H4z"/><path d="M10 20v-5h4v5"/>',
+  mov: '<path d="M9 7h11M9 12h11M9 17h11"/><circle cx="5" cy="7" r=".9"/><circle cx="5" cy="12" r=".9"/><circle cx="5" cy="17" r=".9"/>',
+  plan: '<path d="M4 16.5a8 8 0 0 1 16 0"/><path d="M12 16.5l3.6-4.4"/>',
+  more: '<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  bank: '<path d="M3 9.5 12 4l9 5.5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3.5 20h17"/>',
+  in: '<path d="M17 7 7 17M7 9v8h8"/>',
+  out: '<path d="M7 17 17 7M9 7h8v8"/>',
+};
+const svg = (name, cls = 'ico') => `<svg class="${cls}" viewBox="0 0 24 24">${ICON[name]}</svg>`;
+function nav(active) {
+  const items = [['home', 'Home', 118], ['mov', 'mov.', 312], ['plan', 'planejar', 680], ['more', 'mais', 874]];
+  return items.map(([ic, label, x]) => `<div class="ni${ic === active ? ' on' : ''}" data-ic="${ic}" style="left:${x}px"><div class="bg"></div>${svg(ic)}<span>${label}</span></div>`).join('')
+    + `<div class="nplus">${svg('plus')}</div>`;
+}
 let T = {};
+const el = {};
 function build() {
-  T.amount = new Ticker($('#amount'), [[E.clickButton, '0,00'], [E.key1, '0,08'], [E.key2, '0,86'], [E.key3, '8,64'], [E.key4, '86,40']], { mode: 'slide', w: 28, z: .9 });
-  T.saldo = new Ticker($('#saldo'), [[E.clickToast, '4.820,35'], [E.rollStart, '4.733,95']], { mode: 'roll', w: 10, z: .92, stagger: .035 });
-  T.total = new Ticker($('#total'), [[E.clickLink, '708,16'], [E.barGrow, '794,56']], { mode: 'roll', w: 11, z: .92, stagger: .03 });
-  for (let i = 0; i < 4; i++) $('#row' + i).style.top = ROW_TOP(i) + 'px';
+  $('#h-nav').innerHTML = nav('home');
+  $('#p-nav').innerHTML = nav('plan');
+  $('#h-acc').innerHTML = ACCOUNTS.map(([n, a], i) => `<div class="abs acc" id="acc${i}" style="top:${170 + i * 150}px">${i ? '<div class="abs sep"></div>' : ''}<div class="abs bk">${svg('bank')}</div><div class="abs nm">${n}</div><div class="abs am">${a}</div></div>`).join('');
+  $('#h-mov').innerHTML = MOVES.map(([n, s, a], i) => `<div class="abs mv" id="mov${i}" style="top:${160 + i * 170}px">${i ? '<div class="abs sep"></div>' : ''}<div class="abs nm">${n}</div><div class="abs sb">${s}</div><div class="abs am">${a}</div></div>`).join('');
+  $('#hc-fluxo').insertAdjacentHTML('beforeend', FLUXO.map(([, c], i) => {
+    const x = 60 + i * (70 + 382 / 6);
+    return `<div class="abs ftrk" style="left:${x.toFixed(1)}px"><i class="${c}" id="fl${i}"></i></div><div class="abs flab" style="left:${x.toFixed(1)}px">S${i + 1}</div>`;
+  }).join(''));
+  const CATS = [['Alimentação', 4], ['Transporte', 3], ['Moradia', 5], ['Saúde', 3]];
+  $('#rows').innerHTML = CATS.map(([n, k], i) => `<div class="rw" id="row${i}" style="top:${ROW_TOP(i)}px"><span class="rico"><svg class="ico" viewBox="0 0 24 24"><path d="M3 4.6A1.6 1.6 0 0 1 4.6 3H11l10 10-8 8L3 11z"/><circle cx="7.6" cy="7.6" r="1.4"/></svg></span><span class="rtx"><b>${n}</b><i>${k} subcategorias</i></span><svg class="ico chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>${i === 0 ? '<svg class="ico chk" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : ''}</div>`).join('');
+  $('#p-days').innerHTML = DAYS.map((day, i) => `<div class="abs p-day${day.today ? ' p-today' : ''}" id="pday${i}" style="top:${280 + i * 400}px">
+      <div class="abs p-dcol"></div>${day.today ? '<div class="abs p-acc"></div>' : ''}<div class="abs p-dn">${day.d}</div>
+      <div class="abs p-rows">${FLOWS.map(([ic, label], r) => `<div class="abs p-row" style="top:${r * 80}px">${i === 1 && r === 0 ? '<div class="abs p-hl" id="p-hl"></div><div class="abs p-act" id="p-act"></div>' : ''}<div class="abs p-chip">${ICON[ic] ? svg(ic) : ic}</div><div class="abs p-lab">${label}</div><div class="abs p-amt${day.amts[r] !== '0,00' ? ' on' : ''}" ${i === 1 && r === 0 ? 'id="p-in"' : ''}><span class="rs">R$&nbsp;</span>${i === 1 && r === 0 ? '<span class="tick" id="p-in-v"></span>' : day.amts[r]}</div></div>`).join('')}</div>
+      <div class="abs p-scol">${i ? `<div class="abs p-flash" id="pflash${i}"></div>` : ''}<div class="abs p-sal"><span class="rs">R$</span>${i ? `<span class="tick" id="psal${i}"></span>` : day.saldo}</div></div>
+    </div>`).join('');
+
+  T.amount = new Ticker($('#amount'), [[0, '0,00'], [E.key1, '0,08'], [E.key2, '0,86'], [E.key3, '8,64'], [E.key4, '86,40']], { mode: 'slide', w: 28, z: .9 });
+  T.saldo = new Ticker($('#saldo'), [[0, '4.820,35'], [E.rollStart, '4.733,95']], { mode: 'roll', w: 10, z: .92, stagger: .035 });
+  T.total = new Ticker($('#total'), [[0, '708,16'], [E.barGrow, '794,56']], { mode: 'roll', w: 11, z: .92, stagger: .03 });
+  T.pin = new Ticker($('#p-in-v'), [[0, '0,00'], [E.clickCell + .08, '1.500,00']], { mode: 'slide', w: 22, z: .9, stagger: .035 });
+  T.p1 = new Ticker($('#psal1'), [[0, '4.486,10'], [E.saldo26, '5.986,10']], { mode: 'roll', w: 11, z: .92, stagger: .03 });
+  T.p2 = new Ticker($('#psal2'), [[0, '4.486,10'], [E.saldo27, '5.986,10']], { mode: 'roll', w: 11, z: .92, stagger: .03 });
+
+  for (const id of ['camera', 'box', 'cursor', 'fj', 'h-scroll', 'hc-saldo', 'h-prog', 'v-amount', 'caret', 'v-flash', 'ind', 'arc', 't-chk', 't-chk-p',
+    'k-amt', 'k-delta', 'k-link', 'k-arr', 'g-fc', 'tip', 'tip-l2', 'bar0', 'bar1', 'bar2', 'bar3', 'bar4',
+    'p-hl', 'p-act', 'p-in', 'pflash1', 'pflash2', 'ptip', 'reveal', 'e-tile', 'e-word', 'e-tag'])
+    el[id] = document.getElementById(id);
+  el.layers = Object.fromEntries(Object.keys(LAYERS).map(id => [id, document.getElementById('L-' + id)]));
+  el.kpi = [0, 1, 2, 3].map(i => document.getElementById('kpi' + i));
+  el.fl = FLUXO.map((_, i) => document.getElementById('fl' + i));
+  el.acc = ACCOUNTS.map((_, i) => document.getElementById('acc' + i));
+  el.mov = MOVES.map((_, i) => document.getElementById('mov' + i));
+  el.rows = [0, 1, 2, 3].map(i => document.getElementById('row' + i));
+  el.days = DAYS.map((_, i) => document.getElementById('pday' + i));
+  el.hplus = $('#h-nav .nplus');
+  el.hplusIcon = $('#h-nav .nplus svg');
+  el.pHome = $('#p-nav .ni[data-ic="home"]');
+  el.pHomeBg = $('#p-nav .ni[data-ic="home"] .bg');
 }
 
 // ------------------------------------------------------------------- seek --
-const el = {};
-for (const id of ['camera', 'box', 'cursor', 'fj', 'btn-plus', 'v-amount', 'caret', 'v-flash', 'ind', 'arc', 't-chk', 't-chk-p',
-  'k-amt', 'k-delta', 'k-link', 'k-arr', 'g-plus', 'tip', 'tip-l2', 'bar0', 'bar1', 'bar2', 'bar3', 'bar4'])
-  el[id] = document.getElementById(id);
-const layerEl = Object.fromEntries(Object.keys(LAYERS).map(id => [id, document.getElementById('L-' + id)]));
-const rowEl = [0, 1, 2, 3].map(i => document.getElementById('row' + i));
 const f2 = x => x.toFixed(2), f4 = x => x.toFixed(4);
 const clamp01 = x => Math.min(1, Math.max(0, x));
 
 // Layers toggle visibility; children only fade (a child set to 'visible'
 // would show through a hidden parent).
-function fade(node, o, dy = 16, layer = false) {
+function fade(node, o, dy = 16, isLayer = false) {
   o = clamp01(o);
   if (o < .003) {
-    if (layer) node.style.visibility = 'hidden';
+    if (isLayer) node.style.visibility = 'hidden';
     else { node.style.opacity = '0'; node.style.filter = 'none'; }
     return false;
   }
-  if (layer) node.style.visibility = 'visible';
+  if (isLayer) node.style.visibility = 'visible';
   node.style.opacity = f4(o);
   const blur = (1 - o) * 12;
   node.style.filter = blur > .05 ? `blur(${f2(blur)}px)` : 'none';
@@ -675,34 +1007,41 @@ function fade(node, o, dy = 16, layer = false) {
 }
 
 window.seek = function seek(t) {
-  t = mod(t);
-  // camera
+  t = clampT(t);
   el.camera.style.transform = `scale(${f4(camS(t))})`;
   // the one container
-  const w = boxW(t), h = boxH(t), s = boxS(t);
+  const w = boxW(t), h = boxH(t), s = boxS(t), cy = boxCY(t);
   const b = el.box.style;
   b.width = f2(w) + 'px'; b.height = f2(h) + 'px';
-  b.left = f2(CX - w / 2) + 'px'; b.top = f2(CY - h / 2) + 'px';
-  b.borderRadius = f2(Math.min(boxR(t), w / 2, h / 2)) + 'px';
+  b.left = f2(CX - w / 2) + 'px'; b.top = f2(cy - h / 2) + 'px';
+  b.borderRadius = f2(Math.max(0, Math.min(boxR(t), w / 2, h / 2))) + 'px';
   b.background = boxFill(t);
   b.transform = Math.abs(s - 1) > 1e-4 ? `scale(${f4(s)})` : 'none';
   // content layers
   const vis = {};
-  for (const id in layerO) vis[id] = fade(layerEl[id], layerO[id](t), 16, true);
+  for (const id in LAYERS) vis[id] = fade(el.layers[id], LAYERS[id](t), 16, true);
 
   if (vis.logo) el.fj.style.letterSpacing = f4(fjLS(t)) + 'em';
-  if (vis.btn) el['btn-plus'].style.transform = `rotate(${f2(plusRot(t))}deg)`;
+  if (vis.home) {
+    el['h-scroll'].style.transform = `translateY(${f2(-hScroll(t))}px)`;
+    el['hc-saldo'].style.transform = `scale(${f4(saldoLift(t))})`;
+    el.kpi.forEach((k, i) => fade(k, kpiO[i](t), 22));
+    el['h-prog'].style.width = f2(872 * clamp01(hProg(t))) + 'px';
+    el.fl.forEach((f, i) => { f.style.transform = `translateY(${f2(420 - Math.max(0, fluxoH[i](t)))}px)`; });
+    el.acc.forEach((a, i) => fade(a, accO[i](t), 18));
+    el.mov.forEach((m, i) => fade(m, movO[i](t), 18));
+    el.hplus.style.transform = `scale(${f4(plusS(t))})`;
+    el.hplusIcon.style.transform = `rotate(${f2(plusRot(t))}deg)`;
+  }
   if (vis.value) {
     T.amount.render(t);
     el['v-amount'].style.transform = `scale(${f4(amtPulse(t))})`;
-    el['v-amount'].style.transformOrigin = '0 50%';
-    const typing = t < E.amountLand;
-    const on = typing || mod(t - E.amountLand) % .5 < .25;
+    const on = t < E.amountLand || (t - E.amountLand) % .5 < .25;
     el.caret.style.opacity = on ? 1 : 0;
     el['v-flash'].style.opacity = f4(clamp01(selFlash(t)) * .9);
   }
   if (vis.list) {
-    rowEl.forEach((r, i) => fade(r, rowO[i](t), 22));
+    el.rows.forEach((r, i) => fade(r, rowO[i](t), 22));
     const top = indTop(t), bot = indBot(t);
     const ind = el.ind.style;
     ind.top = f2(top) + 'px'; ind.height = f2(Math.max(0, bot - top)) + 'px';
@@ -710,7 +1049,7 @@ window.seek = function seek(t) {
     ind.background = indFill(t);
     ind.transform = `scale(${f4(indS(t))})`;
     const c = clamp01(chkO(t));
-    const chk = rowEl[0].querySelector('.chk'), chev = rowEl[0].querySelector('.chev');
+    const chk = el.rows[0].querySelector('.chk'), chev = el.rows[0].querySelector('.chev');
     chk.style.opacity = f4(c); chk.style.transform = `scale(${f4(.6 + .4 * c)})`;
     chev.style.opacity = f4(1 - c);
   }
@@ -730,14 +1069,14 @@ window.seek = function seek(t) {
     T.saldo.render(t);
     el['k-amt'].style.transform = `scale(${f4(saldoPulse(t))})`;
     fade(el['k-delta'], deltaO(t), 14);
-    const hv = clamp01(linkH(t));
-    el['k-link'].style.color = css([0, 1, 2].map(i => lab('#6B7067')[i] + (lab('#111708')[i] - lab('#6B7067')[i]) * hv));
+    const hv = clamp01(linkH(t)), a = lab('#6B7067'), z = lab('#111708');
+    el['k-link'].style.color = css([0, 1, 2].map(i => a[i] + (z[i] - a[i]) * hv));
     el['k-arr'].style.transform = `translateX(${f2(8 * hv)}px)`;
   }
   if (vis.chart) {
     T.total.render(t);
     // each bar is a full capsule rising out of its track (the track clips it)
-    const rise = h => `translateY(${f2(TRACK_H - Math.max(0, h))}px)`;
+    const rise = hh => `translateY(${f2(TRACK_H - Math.max(0, hh))}px)`;
     for (let i = 0; i < 3; i++) el['bar' + i].style.transform = rise(barH[i](t));
     const hs4 = Math.max(0, s4H(t));
     el.bar3.style.transform = rise(hs4);
@@ -753,10 +1092,34 @@ window.seek = function seek(t) {
     tip.left = f2(580 + 56 - 150) + 'px';
     tip.top = f2(300 + TRACK_H - hs4 - 24 - tipH + (1 - o) * 10) + 'px';
     tip.filter = o < .997 ? `blur(${f2((1 - o) * 8)}px)` : 'none';
-    el['g-plus'].style.transform = `scale(${f4(gPlusS(t))})`;
+    el['g-fc'].style.transform = `scale(${f4(fcS(t))})`;
+  }
+  if (vis.prev) {
+    el.days.forEach((d, i) => fade(d, dayO[i](t), 26));
+    el['p-hl'].style.opacity = f4(clamp01(cellHl(t)));
+    el['p-act'].style.opacity = f4(clamp01(cellAct(t)));
+    el['p-in'].style.color = cellInk(t);
+    T.pin.render(t); T.p1.render(t); T.p2.render(t);
+    el.pflash1.style.opacity = f4(clamp01(flash[0](t)));
+    el.pflash2.style.opacity = f4(clamp01(flash[1](t)));
+    fade(el.ptip, ptipO(t), -12);
+    el.pHomeBg.style.opacity = f4(clamp01(homeHv(t)));
+    el.pHome.style.transform = `scale(${f4(homeS(t))})`;
+  }
+  // the lime shape that grows out of Home and floods the screen
+  const r = revealR(t);
+  el.reveal.style.visibility = r > .5 ? 'visible' : 'hidden';
+  el.reveal.style.clipPath = `circle(${f2(r)}px at ${REVEAL.x}px ${REVEAL.y}px)`;
+  if (vis.end) {
+    el['e-tile'].style.transform = `scale(${f4(tileS(t))})`;
+    fade(el['e-word'], wordO(t), 22);
+    fade(el['e-tag'], tagO(t), 18);
   }
   // cursor (inside the camera, so it lives in the UI's space)
   el.cursor.style.transform = `translate(${f2(curX(t) - 3)}px, ${f2(curY(t) - 3)}px) scale(${f4(curS(t))})`;
+  const co = clamp01(curO(t));
+  el.cursor.style.opacity = f4(co);
+  el.cursor.style.visibility = co < .003 ? 'hidden' : 'visible';
   return t;
 };
 
@@ -765,7 +1128,7 @@ window.ready = document.fonts.ready.then(() => {
   const q = new URLSearchParams(location.search);
   if (q.has('play')) {
     const t0 = performance.now();
-    const loop = () => { window.seek((performance.now() - t0) / 1000); requestAnimationFrame(loop); };
+    const loop = () => { window.seek(((performance.now() - t0) / 1000) % D); requestAnimationFrame(loop); };
     loop();
   } else {
     window.seek(parseFloat(q.get('t') || '0'));

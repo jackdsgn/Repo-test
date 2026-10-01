@@ -11,7 +11,7 @@ import fs from 'node:fs';
 
 const FPS = +(process.argv[2] || 60), SUB = +(process.argv[3] || 4);
 const html = path.resolve('film.html');
-const P = JSON.parse(fs.readFileSync('audio/timeline.json', 'utf8')).period;
+const P = JSON.parse(fs.readFileSync('audio/timeline.json', 'utf8')).duration;
 const N = Math.round(P * FPS);
 fs.mkdirSync('frames', { recursive: true });
 

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""Measure the beat grid and transient peaks of track_loop.wav with librosa.
+"""Measure the beat grid and transient peaks of track.wav with librosa.
 
-The loop is tiled 3× before analysis so the tracker sees steady context at both
-edges; the middle copy is the measurement. Outputs:
+Outputs
 
 beats.json
-
-  period      loop length in seconds (measured from the audio, not assumed)
-  bpm         tempo measured by librosa
-  beats       32 beat times (s), beat 0 = bar 1 downbeat = t 0
-  downbeats   8 bar starts
-  peaks       onset-strength peaks (s) — UI sounds snap to these
+  duration     length of the film in seconds (from the audio)
+  bpm          60 / mean measured beat interval
+  beats        48 beat times (s); beat 0 = bar 1 downbeat ≈ t 0
+  measured     which of those beats have their own transient (bar 11 beat 4 is a
+               deliberate drop-out and bar 12 rings out, so those come from the fit)
+  peaks        onset-strength peaks (s) — UI sounds snap to these
   downbeat_check  chroma-novelty score per bar phase (chords change on beat 1)
 
 timeline.json  (read by film.html and mix.py)
@@ -24,100 +23,106 @@ import librosa
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-y, sr = librosa.load(HERE / "track_loop.wav", sr=None, mono=True)
-period = len(y) / sr
-tiled = np.tile(y, 3)
+N_BEATS = 48
+y, sr = librosa.load(HERE / "track.wav", sr=None, mono=True)
+duration = len(y) / sr
 hop = 128
 
-onset_env = librosa.onset.onset_strength(y=tiled, sr=sr, hop_length=hop, aggregate=np.median)
-tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr, hop_length=hop,
-                                             start_bpm=120, tightness=400, units="frames")
+onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop, aggregate=np.median)
+# Tempo and phase come from the intro and phrase A (bars 1-6 + the success
+# downbeat), where the kick is the strongest onset. In phrase B the open hats and
+# offbeat bass are louder than the kick and the tracker slips half a beat; the
+# drop-out and the ring-out have no pulse at all. Every grid beat is then snapped
+# to its own measured transient below.
+groove = int(12.6 * sr / hop)
+tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env[:groove], sr=sr, hop_length=hop,
+                                             start_bpm=120, tightness=400, trim=False, units="frames")
 beat_t = librosa.frames_to_time(beat_frames, sr=sr, hop_length=hop)
-
-# transient peaks (time of the onset-strength maximum, not backtracked)
 peak_frames = librosa.onset.onset_detect(onset_envelope=onset_env, sr=sr, hop_length=hop,
                                          backtrack=False, units="frames")
 peak_t = librosa.frames_to_time(peak_frames, sr=sr, hop_length=hop)
 
-# refine every tracked beat to the strongest transient within ±40 ms
-refined = []
-for bt in beat_t:
-    near = peak_t[np.abs(peak_t - bt) <= 0.040]
-    if len(near):
-        strengths = onset_env[librosa.time_to_frames(near, sr=sr, hop_length=hop)]
-        refined.append(float(near[np.argmax(strengths)]))
-    else:
-        refined.append(float(bt))
-refined = np.array(refined)
 
-# middle copy only, wrapped to [0, period)
-mid = refined[(refined >= period - 0.25) & (refined < 2 * period - 0.25)] - period
-mid = np.sort(np.mod(mid, period))
-if len(mid) != 32:
-    raise SystemExit(f"expected 32 beats, measured {len(mid)}: {mid}")
+def snap(t, window):
+    near = peak_t[np.abs(peak_t - t) <= window]
+    if not len(near):
+        return None
+    strengths = onset_env[librosa.time_to_frames(near, sr=sr, hop_length=hop)]
+    return float(near[np.argmax(strengths)])
 
-# bar phase: chords change on beat 1 of every bar, so the beat-synchronous
-# chroma changes most at downbeats (claps on 2 & 4 would fool an energy test).
-chroma = librosa.feature.chroma_cqt(y=tiled, sr=sr, hop_length=512)
-edges = librosa.time_to_frames(np.concatenate([mid, mid + period, mid + 2 * period]), sr=sr, hop_length=512)
-sync = librosa.util.sync(chroma, edges, aggregate=np.median)
-sync = librosa.util.normalize(sync, norm=2, axis=0)
-# sync pads a segment before the first edge, so column k+1 is beat k and
-# novelty[k] (column k → k+1) is the change into beat k.
-novelty = np.linalg.norm(np.diff(sync, axis=1), axis=0)
-nov_mid = novelty[32:64]                                           # middle copy, beat 0..31
-phase_score = [float(np.mean(nov_mid[p::4])) for p in range(4)]
+
+refined = np.array([snap(b, 0.040) or b for b in beat_t])
+
+# Grid: a straight line t = a + b·n through the tracked beats, refitted on inliers.
+idx = np.round((refined - refined[0]) / 0.5).astype(int)
+b_fit, a_fit = np.polyfit(idx, refined, 1)
+for _ in range(3):
+    n_all = np.round((refined - a_fit) / b_fit).astype(int)
+    inl = np.abs(refined - (a_fit + b_fit * n_all)) < 0.04
+    b_fit, a_fit = np.polyfit(n_all[inl], refined[inl], 1)
+# every grid beat across the whole film, measured from its own transient
+refined = np.array([snap(a_fit + b_fit * n, 0.04) or np.nan for n in range(N_BEATS + 4)])
+refined = refined[np.isfinite(refined)]
+k0 = int(np.ceil((-0.06 - a_fit) / b_fit))      # first grid index at t ≥ −60 ms (the downbeat at 0)
+beats, measured = [], []
+for n in range(k0, k0 + N_BEATS + 4):
+    t_fit = a_fit + b_fit * n
+    hit = refined[np.abs(refined - t_fit) <= 0.04]
+    beats.append(max(0.0, float(hit[0]) if len(hit) else t_fit))
+    measured.append(bool(len(hit)))
+beats, measured = np.array(beats), np.array(measured)
+
+# bar phase: chords change on beat 1, so beat-synchronous chroma changes most there
+# (explicit per-beat medians: librosa.util.sync drops its pad column when the
+# first edge is frame 0, which would shift every index by one)
+chroma = librosa.feature.chroma_cqt(y=y, sr=sr, hop_length=512)
+edges = librosa.time_to_frames(beats[:45], sr=sr, hop_length=512)
+per_beat = np.stack([np.median(chroma[:, a:b], axis=1) for a, b in zip(edges[:-1], edges[1:])], axis=1)
+per_beat /= np.linalg.norm(per_beat, axis=0, keepdims=True) + 1e-9
+novelty = np.r_[0.0, np.linalg.norm(np.diff(per_beat, axis=1), axis=0)]   # novelty[k]: change into beat k
+phase_score = [float(np.mean(novelty[p:44:4][novelty[p:44:4] > 0] if p == 0 else novelty[p:44:4])) for p in range(4)]
 phase = int(np.argmax(phase_score))
-beats = np.roll(mid, -phase)
-beats = np.mod(beats - beats[0], period) + beats[0]
-offset = float(beats[0])  # measured downbeat time (≈ kick transient latency)
+beats, measured = beats[phase: phase + N_BEATS], measured[phase: phase + N_BEATS]
+if phase != 0 or beats[0] > 0.05:
+    raise SystemExit(f"track must start on a downbeat; got phase {phase}, first beat {beats[0]:.3f}s")
 
-peaks_mid = peak_t[(peak_t >= period) & (peak_t < 2 * period)] - period
-
+peaks = np.sort(peak_t)
 out = {
-    "source": "audio/track_loop.wav",
-    "period": round(period, 6),
-    "bpm": round(60.0 / float(np.mean(np.diff(beats))), 3),
+    "source": "audio/track.wav",
+    "duration": round(duration, 6),
+    "bpm": round(60.0 / b_fit, 3),
     "bpm_librosa_estimate": round(float(np.atleast_1d(tempo)[0]), 3),
-    "downbeat_offset": round(offset, 6),
+    "downbeat_offset": round(float(beats[0]), 6),
     "beats": [round(float(b), 6) for b in beats],
+    "measured": [bool(m) for m in measured],
     "downbeats": [round(float(b), 6) for b in beats[::4]],
-    "peaks": [round(float(p), 6) for p in np.sort(peaks_mid)],
+    "peaks": [round(float(p), 6) for p in peaks],
     "downbeat_check": {"phase_scores": [round(s, 3) for s in phase_score], "chosen_phase": phase},
 }
 (HERE / "beats.json").write_text(json.dumps(out, indent=1))
 
-nominal = np.arange(32) * 0.5
-dev = (beats - beats[0]) - nominal
-print(f"period {period:.4f}s · bpm {out['bpm']} · downbeat offset {offset * 1000:.1f} ms")
-print(f"beat deviation from 0.5 s grid: max {np.max(np.abs(dev)) * 1000:.1f} ms, mean {np.mean(np.abs(dev)) * 1000:.1f} ms")
-print(f"phase scores {out['downbeat_check']['phase_scores']} → phase {phase}")
-print(f"{len(out['peaks'])} peaks")
+dev = beats - (beats[0] + 0.5 * np.arange(N_BEATS))
+print(f"duration {duration:.3f}s · bpm {out['bpm']} · downbeat {beats[0] * 1000:.1f} ms · "
+      f"{int(measured.sum())}/{N_BEATS} beats measured")
+print(f"deviation from a 0.5 s grid: max {np.max(np.abs(dev)) * 1000:.1f} ms, mean {np.mean(np.abs(dev)) * 1000:.1f} ms")
+print(f"phase scores {out['downbeat_check']['phase_scores']} → phase {phase} · {len(peaks)} peaks")
 
 
 # ---------------------------------------------------------------- timeline --
 def grid_time(beat):
-    """Measured time of a (possibly fractional) beat index, on the circle."""
-    ext = np.append(beats, beats[0] + period)
-    i = int(np.floor(beat)) % 32
-    f = beat - np.floor(beat)
-    return float(ext[i] + f * (ext[i + 1] - ext[i]))
+    i = int(np.floor(beat))
+    return float(beats[i] + (beat - i) * (beats[i + 1] - beats[i]))
 
 
-peaks_arr = np.array(out["peaks"])
 events, sounds = {}, []
 for ev in json.loads((HERE / "events.json").read_text())["events"]:
     t = grid_time(ev["beat"])
-    d = (peaks_arr - t + period / 2) % period - period / 2   # circular distance
-    j = int(np.argmin(np.abs(d)))
-    if abs(d[j]) <= 0.035:
-        t = float(peaks_arr[j])
-    events[ev["id"]] = round(t % period, 6)
+    t = snap(t, 0.035) or t
+    events[ev["id"]] = round(t, 6)
     if ev["sound"]:
         sounds.append({"t": events[ev["id"]], "type": ev["sound"], "id": ev["id"]})
 
-timeline = {"period": out["period"], "bpm": out["bpm"], "beats": out["beats"],
+timeline = {"duration": out["duration"], "bpm": out["bpm"], "beats": out["beats"],
             "events": events, "sounds": sounds}
 (HERE / "timeline.json").write_text(json.dumps(timeline, indent=1))
 print(f"timeline: {len(events)} events, {len(sounds)} UI sounds")
-

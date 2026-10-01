@@ -4,16 +4,20 @@
 Everything here is synthesized from scratch with numpy/scipy, so the track is
 royalty-free by construction.
 
-Output (48 kHz, stereo, 24-bit WAV):
-  track_loop.wav  8 bars = 16.000 s. Circular render: every reverb/delay tail
-                  that runs past bar 8 is folded back onto bar 1, so the file
-                  loops with no seam.
+Output: track.wav — 48 kHz, stereo, 24-bit, 12 bars = 24.000 s, F major.
 
-Form (bars 1-8, F major, 4-on-the-floor):
-  1-4  phrase A  "acao"      kick · clap · closed hats · offbeat bass · EP
-  5-8  phrase B  "resultado" + open hats · shaker · pad · pluck motif
-  riser 7.0→8.0 s into the success downbeat (bar 5) + soft impact on 8.0 s
-  bar 8 beat 4: clap roll + riser that lands on the loop point
+Form (4-on-the-floor):
+  bars 1-3   intro     the Home tour     kick · hats · EP, then bass (bar 2), clap (bar 3)
+  bars 4-6   phrase A  "ação"            full groove; bar 6 Bb → C sets up the success
+             riser 11.0 → 12.0 s under the loader
+  bars 7-11  phrase B  "resultado"       + open hats · shaker · pad · pluck motif;
+             success on the bar 7 downbeat (F) with a soft impact
+  bar 10     Bbmaj9 lift as the Previsibilidade screen opens
+  bar 11     Gm9 → C; beat 4 drops out: the cursor clicks Home in the silence
+  bar 12     resolution on Fmaj9 under the logo: impact, sting, ring-out, fade
+
+On backbeats where the cursor clicks, the clap drops to 30 % and the click itself
+becomes the backbeat.
 """
 import json
 from pathlib import Path
@@ -26,8 +30,9 @@ SR = 48_000
 BPM = 120.0
 BEAT = 60.0 / BPM          # 0.5 s
 BAR = 4 * BEAT             # 2.0 s
-LOOP_BARS = 8
-LOOP_SEC = LOOP_BARS * BAR  # 16.0 s
+BARS = 12
+FILM_SEC = BARS * BAR      # 24.0 s
+END = 11 * BAR             # 22.0 s: the final downbeat (bar 12)
 OUT = Path(__file__).resolve().parent
 
 rng = np.random.default_rng(20260925)
@@ -208,36 +213,51 @@ F_MAJ9 = (41, [57, 60, 64, 67])
 A_MIN7 = (45, [55, 60, 64, 69])
 D_MIN9 = (38, [53, 57, 60, 64])
 BB_MAJ9 = (34, [57, 60, 62, 65])
-C_SUS = (36, [55, 60, 65])
+G_MIN9 = (43, [58, 62, 65, 69])
 C_MAJ = (36, [55, 60, 64])
 
-# 8 bars × 2 half-bars
+# bars 1-11 × 2 half-bars; bar 12 is the final chord
 HARMONY = [
-    (F_MAJ9, F_MAJ9), (A_MIN7, A_MIN7), (D_MIN9, D_MIN9), (BB_MAJ9, C_MAJ),
-    (F_MAJ9, F_MAJ9), (A_MIN7, A_MIN7), (D_MIN9, D_MIN9), (BB_MAJ9, C_SUS),
+    (F_MAJ9, F_MAJ9), (A_MIN7, A_MIN7), (D_MIN9, D_MIN9), (BB_MAJ9, C_MAJ),     # Home tour
+    (F_MAJ9, F_MAJ9), (BB_MAJ9, C_MAJ),                                          # task → loader
+    (F_MAJ9, F_MAJ9), (A_MIN7, A_MIN7), (D_MIN9, D_MIN9),                        # success → chart
+    (BB_MAJ9, BB_MAJ9), (G_MIN9, C_MAJ),                                         # forecast → Home
 ]
+INTRO_BARS = 3   # Home tour: no bass in bar 1, no clap before bar 3
+PHRASE_B = 6     # bar 7 on: open hats, shaker, pad, pluck
 
 # pluck motif for phrase B (beat offset within bar, midi)
 MOTIF = {
-    4: [(0.5, 72), (1.0, 69), (1.5, 67), (2.5, 69), (3.0, 72), (3.5, 76)],
-    5: [(0.5, 76), (1.0, 72), (1.5, 69), (2.5, 72), (3.0, 76), (3.5, 79)],
-    6: [(0.5, 77), (1.0, 76), (1.5, 72), (2.5, 69), (3.0, 72), (3.5, 74)],
-    7: [(0.5, 74), (1.0, 72), (1.5, 69), (2.5, 67), (3.0, 72), (3.5, 76)],
+    6: [(0.5, 72), (1.0, 69), (1.5, 67), (2.5, 69), (3.0, 72), (3.5, 76)],
+    7: [(0.5, 76), (1.0, 72), (1.5, 69), (2.5, 72), (3.0, 76), (3.5, 79)],
+    8: [(0.5, 77), (1.0, 76), (1.5, 72), (2.5, 69), (3.0, 72), (3.5, 74)],
+    9: [(0.5, 74), (1.0, 72), (1.5, 69), (2.5, 65), (3.0, 69), (3.5, 72)],
+    10: [(0.5, 70), (1.0, 74), (1.5, 77), (2.5, 76), (3.0, 79)],
 }
+DROP = (10, 3)  # bar 11, beat 4: drums, bass and keys rest — the Home click sounds alone
 
 
-def arrange(t0, buses, bars=range(LOOP_BARS)):
-    """Place the 8-bar groove starting at t0 seconds."""
+def bell(midi, vel=1.0):
+    """FM bell for the closing sting."""
+    t = tvec(2.2)
+    f = hz(midi)
+    x = np.sin(2 * np.pi * f * t + 1.1 * np.exp(-t / 0.25) * np.sin(2 * np.pi * 3.5 * f * t))
+    return x * np.minimum(1.0, t / 0.002) * np.exp(-t / 0.7) * vel
+
+
+def arrange(buses):
     d, b, k, pd, pl, fx = (buses[n] for n in ("drums", "bass", "keys", "pad", "pluck", "fx"))
     kicks = []
-    for bar in bars:
-        tb = t0 + bar * BAR
-        phrase_b = bar >= 4
+    for bar in range(BARS - 1):
+        tb = bar * BAR
+        phrase_b = bar >= PHRASE_B
         for beat in range(4):
+            if (bar, beat) == DROP:
+                continue
             tt = tb + beat * BEAT
             d.add(tt, kick(), 0.80)
             kicks.append(tt)
-            if beat in (1, 3):
+            if beat in (1, 3) and bar >= INTRO_BARS - 1:
                 duck = 0.3 if bar * 4 + beat in CLICK_BACKBEATS else 1.0
                 d.add(tt, clap(), (0.42 if not phrase_b else 0.50) * duck, p=0.05)
             off = tt + BEAT / 2
@@ -252,10 +272,13 @@ def arrange(t0, buses, bars=range(LOOP_BARS)):
         # harmony: two halves per bar
         for half, (root, voicing) in enumerate(HARMONY[bar]):
             th = tb + half * 2 * BEAT
-            for s in (0.5, 1.5):  # offbeat 8th bass
-                b.add(th + s * BEAT, bass(root, 0.36 * BEAT * 2), 0.24)
+            for s in (0.5, 1.5):  # offbeat 8th bass (from bar 2)
+                if bar >= 1 and (bar, half * 2 + int(s)) != DROP:
+                    b.add(th + s * BEAT, bass(root, 0.36 * BEAT * 2), 0.24)
             hits = [(0.0, 1.35, 0.85), (1.5, 0.4, 0.6)]
             for (st, du, ve) in hits:
+                if (bar, half * 2 + int(st)) == DROP:
+                    continue
                 for i, m in enumerate(voicing):
                     k.add(th + st * BEAT, ep(m, du * BEAT, ve + (0.08 if phrase_b else 0.0)),
                           0.075, p=(-0.25 + 0.5 * i / max(1, len(voicing) - 1)))
@@ -265,12 +288,19 @@ def arrange(t0, buses, bars=range(LOOP_BARS)):
             for (st, m) in MOTIF[bar]:
                 pl.add(tb + st * BEAT, pluck(m, 0.9), 0.15, p=0.15)
     # transitions
-    fx.add(t0 + 7.0, riser(1.0), 0.20)                 # loader → success
-    fx.add(t0 + 8.0, impact(), 0.30)                   # success downbeat
-    roll_t = t0 + 15.5
-    for i in range(4):                                 # bar 8, beat 4: clap roll
-        d.add(roll_t + i * BEAT / 4, clap(0.45 + 0.15 * i), 0.22, p=0.05)
-    fx.add(t0 + 15.0, riser(1.0), 0.12)                # lands on the loop point
+    fx.add(11.0, riser(1.0), 0.20)                     # loader → success
+    fx.add(12.0, impact(), 0.30)                       # success downbeat
+    fx.add(END - 1.0, riser(1.0), 0.30)                # into the reveal
+    # bar 10: resolution under the logo
+    d.add(END, kick(), 0.85)
+    kicks.append(END)
+    fx.add(END, impact(), 0.42)
+    b.add(END, bass(F_MAJ9[0], 1.6), 0.26)
+    for i, m in enumerate(F_MAJ9[1]):
+        k.add(END, ep(m, 1.8, 0.95), 0.08, p=-0.25 + 0.5 * i / 3)
+    pd.add(END, pad([m + 12 for m in F_MAJ9[1][:3]], 1.6), 0.08)
+    for i, m in enumerate((81, 84, 89)):               # sting: A5 · C6 · F6
+        fx.add(END + 0.02 + i * 0.07, bell(m), 0.10, p=(-0.2, 0.0, 0.2)[i])
     return kicks
 
 
@@ -284,81 +314,65 @@ def make_ir(rt60=1.45, pre=0.016):
     return ir / np.sqrt(np.sum(ir ** 2) / 2)
 
 
-def conv_circular(x, ir):
-    """Circular convolution (FFT size = loop length): reverb tails wrap onto bar 1."""
-    n = len(x)
-    return np.stack([np.fft.irfft(np.fft.rfft(x[:, c], n) * np.fft.rfft(ir[:, c], n), n)
-                     for c in range(2)], axis=1)
+def conv(x, ir):
+    return np.stack([signal.fftconvolve(x[:, c], ir[:, c])[: len(x)] for c in range(2)], axis=1)
 
 
-def delay_circular(x, t_d, fb=0.38, taps=6):
-    """Ping-pong delay whose repeats wrap around the loop."""
+def delay(x, t_d, fb=0.38, taps=6):
+    """Ping-pong delay."""
     y = np.zeros_like(x)
     n_d = int(round(t_d * SR))
     for i in range(1, taps + 1):
         src = x[:, ::-1] if i % 2 else x
-        y += fb ** i * np.roll(src, i * n_d, axis=0)
+        y[i * n_d:] += fb ** i * src[: len(x) - i * n_d]
     return y
 
 
 def duck_env(n, kicks, depth, rel=0.13):
-    """Sidechain gain from the kick times, evaluated on the circle."""
+    """Sidechain gain from the kick times."""
     t = np.arange(n) / SR
-    loop = n / SR
     g = np.ones(n)
     for tk in kicks:
-        for off in (-loop, 0.0, loop):
-            dt = t - (tk + off)
-            m = (dt >= 0) & (dt < 6 * rel)
-            att = np.minimum(1.0, dt[m] / 0.004)
-            g[m] = np.minimum(g[m], 1 - depth * att * np.exp(-dt[m] / rel))
+        dt = t - tk
+        m = (dt >= 0) & (dt < 6 * rel)
+        att = np.minimum(1.0, dt[m] / 0.004)
+        g[m] = np.minimum(g[m], 1 - depth * att * np.exp(-dt[m] / rel))
     return g[:, None]
 
 
-def fold(buf, n):
-    """Wrap everything past n samples back onto the start (circular loop)."""
-    out = buf[:n].copy()
-    for i in range(n, len(buf), n):
-        seg = buf[i:i + n]
-        out[: len(seg)] += seg
-    return out
-
-
 def master(x):
-    n = len(x)
-    x = hp(np.tile(x, (3, 1)), 28, 2)[n:2 * n]  # filter state wraps too: no seam
+    x = hp(x, 28, 2)
     x = x / np.max(np.abs(x)) * 0.95
     x = np.tanh(1.35 * x) / np.tanh(1.35)
-    rms = np.sqrt(np.mean(x ** 2))
-    return x * min(10 ** (-14.5 / 20) / rms, 0.98 / np.max(np.abs(x)))
+    rms = np.sqrt(np.mean(x[int(6 * SR): int(END * SR)] ** 2))   # level set on the full groove
+    x = x * min(10 ** (-14.5 / 20) / rms, 0.98 / np.max(np.abs(x)))
+    fade = int(0.7 * SR)                                     # ring-out fades into the last frame
+    x[-fade:] *= np.linspace(1, 0, fade)[:, None] ** 2
+    return x
 
 
 def mixdown(buses, kicks, n):
-    dry = {k: fold(v.buf, n) for k, v in buses.items()}
+    dry = {k: v.buf[:n] for k, v in buses.items()}
     g_soft = duck_env(n, kicks, 0.42)
     g_bass = duck_env(n, kicks, 0.65, rel=0.09)
     keys = dry["keys"] * g_soft
     padb = dry["pad"] * g_soft
-    plk = (dry["pluck"] + 0.55 * delay_circular(dry["pluck"], 0.375)) * g_soft
+    plk = (dry["pluck"] + 0.55 * delay(dry["pluck"], 0.375)) * g_soft
     send = 0.10 * dry["drums"] + 0.28 * keys + 0.45 * padb + 0.35 * plk + 0.5 * dry["fx"]
-    wet = conv_circular(send, make_ir())
+    wet = conv(send, make_ir())
     mix = dry["drums"] + dry["bass"] * g_bass + keys + padb + plk + dry["fx"] + 0.22 * wet
     return master(mix)
 
 
-def new_buses(sec):
-    return {n: Bus(sec) for n in ("drums", "bass", "keys", "pad", "pluck", "fx")}
-
-
-def render_loop():
-    n = int(round(LOOP_SEC * SR))
-    buses = new_buses(LOOP_SEC + 4.0)
-    kicks = arrange(0.0, buses)
+def render():
+    n = int(round(FILM_SEC * SR))
+    buses = {name: Bus(FILM_SEC + 3.0) for name in ("drums", "bass", "keys", "pad", "pluck", "fx")}
+    kicks = arrange(buses)
     return mixdown(buses, kicks, n)
 
 
 if __name__ == "__main__":
-    loop = render_loop()
-    sf.write(OUT / "track_loop.wav", loop, SR, subtype="PCM_24")
-    print(f"track_loop.wav {len(loop) / SR:.3f}s  peak {np.max(np.abs(loop)):.3f}  "
-          f"rms {20 * np.log10(np.sqrt(np.mean(loop ** 2))):.1f} dBFS")
+    track = render()
+    sf.write(OUT / "track.wav", track, SR, subtype="PCM_24")
+    print(f"track.wav {len(track) / SR:.3f}s  peak {np.max(np.abs(track)):.3f}  "
+          f"rms {20 * np.log10(np.sqrt(np.mean(track[int(6 * SR): int(END * SR)] ** 2))):.1f} dBFS (bars 4-11)")
