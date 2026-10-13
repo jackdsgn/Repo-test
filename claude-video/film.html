@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <title>Vídeos com Claude · Versão clara</title>
 <!--
-  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps · 40 s.
+  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps · 50 s
+  (roteiro de 40 s + pausas de leitura, ver PACE).
 
   Roteiro: Motion_PTBR_Roteiro_Prompts_v01.md · Storyboard: Storyboard_Claude_Claro_v01_APROVACAO.pdf.
 
@@ -419,7 +420,7 @@ const CAPS = [
   [15.95, 18.35, 16.00, 17.20, 'Vídeos, imagens e áudios.'],
   [18.55, 20.85, 18.60, 20.00, 'Cinco: envie arquivos e instruções.'],
   [21.05, 23.45, 21.10, 22.40, 'Seis: explique o resultado.'],
-  [23.55, 26.35, 23.60, 25.00, 'Formato, duração, ritmo e animações.'],
+  [23.55, 26.35, 23.60, 24.60, 'Formato, duração, ritmo e animações.'],
   [26.55, 28.45, 26.60, 27.60, 'Sete: aguarde a prévia.'],
   [28.55, 30.35, 28.60, 29.90, 'O tempo varia conforme o projeto.'],
   [30.55, 31.65, 30.60, 31.30, 'Precisa ajustar?'],
@@ -433,8 +434,40 @@ const CAPS = [
   return { a, b, w0, w1, el, words: [...el.querySelectorAll('em')] };
 });
 
+// ---------- ritmo: pausas de leitura ----------
+// A timeline abaixo usa o tempo do roteiro (40 s). PACE insere pausas onde cada ação termina
+// (hold: o quadro fica estável) e alonga o resumo (stretch). O vídeo final dura DURATION.
+const PACE = [
+  { at: 5.56, hold: 0.6 },    // 03 · chat pronto
+  { at: 9.00, hold: 0.8 },    // 04 · guia e referências
+  { at: 13.00, hold: 1.5 },   // 05 · SKILL.md digitado
+  { at: 17.30, hold: 0.8 },   // 06 · materiais
+  { at: 20.30, hold: 0.8 },   // 07 · anexos
+  { at: 24.97, hold: 1.5 },   // 08 · pedido digitado, antes do envio
+  { at: 26.20, hold: 1.0 },   // 08 · "Preparando a prévia…"
+  { at: 30.00, hold: 0.6 },   // 09 · check
+  { at: 32.72, hold: 1.2 },   // 10 · ajuste concluído
+  { a: 33.00, b: 33.80, len: 2.0 },   // 11 · resumo de 1 s para 2 s
+];
+const KNOTS = [[0, 0]];   // [novo, roteiro]
+for (const e of PACE) {
+  const [n, o] = KNOTS[KNOTS.length - 1];
+  if (e.hold) { const n0 = n + e.at - o; KNOTS.push([n0, e.at], [n0 + e.hold, e.at]); }
+  else { const n0 = n + e.a - o; KNOTS.push([n0, e.a], [n0 + e.len, e.b]); }
+}
+{ const [n, o] = KNOTS[KNOTS.length - 1]; KNOTS.push([n + 40 - o, 40]); }
+const DURATION = KNOTS[KNOTS.length - 1][0];
+function warp(T) {
+  for (let i = 1; i < KNOTS.length; i++) {
+    const [n0, o0] = KNOTS[i - 1], [n1, o1] = KNOTS[i];
+    if (T <= n1) return n1 === n0 ? o1 : o0 + (T - n0) * (o1 - o0) / (n1 - n0);
+  }
+  return 40 + (T - DURATION);
+}
+
 // ---------- timeline ----------
-function seek(t) {
+function seek(T) {
+  const t = warp(T);   // tempo do roteiro; T (tempo real) só para cursor e pulsos
   // 01 · Abertura (0–2 s)
   const s1out = 1.80;
   show($('s1e'), t, 0.00, 0.40, s1out, { dy: 16 });
@@ -478,7 +511,7 @@ function seek(t) {
   show($('pill'), t, 10.55, 0.35, null, { dy: 0, s0: 0.85 });
   {
     const n = Math.floor(prog(t, 10.75, 12.85) * CODE_N + 1e-6);
-    const blink = t < 12.85 || Math.floor((t - 12.85) * 2.2) % 2 === 0;
+    const blink = t < 12.85 || Math.floor(T * 2.2) % 2 === 0;
     $('code').innerHTML = typeLines(CODE, n, t >= 10.70 && blink, 26);
   }
 
@@ -500,7 +533,7 @@ function seek(t) {
     put(f, { o: enter(t, 18.70, 0.35) });
     // pedido digitado
     const n = Math.floor(prog(t, 21.25, 24.40) * ASK_N + 1e-6);
-    const blink = t < 24.40 || Math.floor((t - 24.40) * 2.2) % 2 === 0;
+    const blink = t < 24.40 || Math.floor(T * 2.2) % 2 === 0;
     $('typed').innerHTML = typeLines(ASK, n, t >= 21.20 && blink, 30);
     const go = INOUT(prog(t, 25.10, 25.35));
     put($('typed'), { o: (t >= 21.15 ? 1 : 0) * (1 - go), x: go * 60, y: -go * 90, s: 1 - 0.1 * go });
@@ -515,7 +548,7 @@ function seek(t) {
     show($('reply2'), t, 25.60, 0.40, null, { dy: 14 });
     show($('replyTxt'), t, 25.75, 0.40, null, { dy: 8 });
     document.querySelectorAll('#reply2 .rd').forEach((d, i) => {
-      d.style.opacity = (0.35 + 0.65 * (0.5 + 0.5 * Math.cos(2 * Math.PI * ((t - 25.6) / 0.9 - i * 0.12 / 0.9)))).toFixed(3);
+      d.style.opacity = (0.35 + 0.65 * (0.5 + 0.5 * Math.cos(2 * Math.PI * ((T - 25.6) / 0.9 - i * 0.12 / 0.9)))).toFixed(3);
     });
   }
 
@@ -526,7 +559,7 @@ function seek(t) {
   show($('procTxt'), t, 26.95, 0.40, 29.50, { dy: 10, outD: 0.15 });
   show($('procDots'), t, 27.05, 0.40, 29.50, { dy: 10, outD: 0.15 });
   document.querySelectorAll('#procDots .pd').forEach((d, i) => {
-    d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin(2 * Math.PI * ((t - 27.1) / 0.8 - i * 0.12 / 0.8)))).toFixed(2)}px)`;
+    d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin(2 * Math.PI * ((T - 27.1) / 0.8 - i * 0.12 / 0.8)))).toFixed(2)}px)`;
   });
   show($('tvar'), t, 27.10, 0.35, 30.25, { dy: 10 });
 
@@ -565,11 +598,12 @@ function seek(t) {
 }
 
 window.seek = seek;
+window.DURATION = DURATION;
 window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode()))).then(() => { seek(0); return true; });
 
 const q = new URLSearchParams(location.search);
 if (q.has('t')) window.ready.then(() => seek(+q.get('t')));
-if (q.has('play')) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % 40); requestAnimationFrame(f); }; f(); });
+if (q.has('play')) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(f); }; f(); });
 </script>
 </body>
 </html>

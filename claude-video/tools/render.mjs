@@ -1,15 +1,15 @@
 // film.html → frames/master.mkv (sem perdas, FFV1)
 // 30 fps; cada quadro é a média de SUB subquadros no intervalo do quadro (obturador 180°),
 // o que dá um motion blur leve sem mudar o desenho dos estados estáveis.
-//   node tools/render.mjs [inicio=0] [fim=8] [fps=30] [sub=4]
+//   node tools/render.mjs [inicio=0] [fim=duração do filme] [fps=30] [sub=4]
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 
-const [T0, T1, FPS, SUB] = [0, 8, 30, 4].map((d, i) => process.argv[2 + i] === undefined ? d : +process.argv[2 + i]);
-const N = Math.round((T1 - T0) * FPS);
+const arg = (i, d) => process.argv[2 + i] === undefined ? d : +process.argv[2 + i];
+const [T0, FPS, SUB] = [arg(0, 0), arg(2, 30), arg(3, 4)];
 fs.mkdirSync('frames', { recursive: true });
 
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error',
@@ -23,6 +23,8 @@ const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, de
 page.on('pageerror', e => { console.error('[pageerror]', e.message); process.exit(1); });
 await page.goto(pathToFileURL(path.resolve('film.html')).href);
 await page.evaluate(() => window.ready);
+const T1 = arg(1, await page.evaluate(() => window.DURATION));
+const N = Math.round((T1 - T0) * FPS);
 const cdp = await page.context().newCDPSession(page);
 
 const t0 = Date.now();
