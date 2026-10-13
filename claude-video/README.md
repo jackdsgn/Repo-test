@@ -76,7 +76,7 @@ As bordas de cada trecho são medidas; dentro do trecho, o tempo de cada palavra
 sílabas (não havia transcrição automática neste ambiente).
 
 `audio/mix.py` soma voz e efeitos: efeitos 7 dB abaixo da voz, com ducking de 6 dB enquanto ela fala,
-−16 LUFS integrado e true peak de −1,2 dBTP.
+−16 LUFS integrado (−16,5 no MP4) e true peak de −1,5 dBTP depois do AAC.
 
 ## Efeitos sonoros
 

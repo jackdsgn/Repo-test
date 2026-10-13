@@ -50,7 +50,7 @@ with wave.open(str(tmp), 'wb') as w:
 # limitador de pico (o loudness já está em −16 LUFS)
 out = ROOT / 'audio/mix.wav'
 subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', str(tmp), '-af',
-                'alimiter=limit=0.85:attack=2:release=60:level=false', '-ar', str(SR), '-c:a', 'pcm_s16le', str(out)],
+                'alimiter=limit=0.76:attack=2:release=60:level=false', '-ar', str(SR), '-c:a', 'pcm_s16le', str(out)],
                check=True)
 tmp.unlink()
 log = subprocess.run(['ffmpeg', '-v', 'info', '-i', str(out), '-af', 'ebur128=peak=true', '-f', 'null', '-'], capture_output=True, text=True).stderr
