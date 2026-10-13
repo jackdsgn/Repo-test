@@ -42,8 +42,9 @@ for m in re.finditer(r'\{ *(at: *([\d.]+), *hold: *([\d.]+)|a: *([\d.]+), *b: *(
         a, b, ln = float(m.group(4)), float(m.group(5)), float(m.group(6))
         n0 = n + a - o
         knots += [(n0, a), (n0 + ln, b)]
+END = float(re.search(r'const END = ([\d.]+)', html).group(1))
 n, o = knots[-1]
-knots.append((n + 40 - o, 40.0))
+knots.append((n + END - o, END))
 DURATION = knots[-1][0]
 
 
@@ -128,6 +129,12 @@ CUES += [   # cliques e confirmações
     (34.30, 'clk', -1, -4),         # 12 marcador
 ]
 CUES += [(6.94 + 0.12 * i, 'clk', -11, 3 + i) for i in range(5)]             # 04 checks do guia
+CUES += [   # 14 · assinatura JACK (começa em 40,35 no roteiro)
+    (40.35 + 0.30, 'wh2', 0, 0),     # K surge girando
+    (40.35 + 1.05, 'wh4', -4, 2),    # K desliza
+]
+CUES += [(40.35 + 1.10 + 0.13 * i, 'pop', -3, 2 * i) for i in range(3)]      # J, A, C sobem
+CUES += [(40.35 + 1.75, 'clk', -2, -2)]                                      # JACK completo
 CUES += [(33.33 + 0.06 * i, 'clk', -8, 2 + i) for i in range(7)]             # 11 checks do resumo
 
 # ---------- mixagem ----------

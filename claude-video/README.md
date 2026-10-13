@@ -1,19 +1,20 @@
 # Como editar vídeos com Claude · versão clara (9:16)
 
 Motion explicativo PT-BR, recriado a partir de `Motion_PTBR_Roteiro_Prompts_v01.md` e do
-storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 50 s no total
-(roteiro de 40 s + pausas de leitura).
+storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 54,2 s no total
+(roteiro de 40 s + pausas de leitura + assinatura JACK).
 
-**Status:** v04 com as 13 cenas, 50 s, **com efeitos sonoros e sem locução**.
+**Status:** v05 final de imagem e efeitos: 13 cenas + assinatura, 54,2 s, **sem locução**.
 
 - v01: prévia de 0–8 s; animações aprovadas.
 - v02: composição escalada para ocupar o quadro vertical; logo em laranja e preto; cenas 05–13.
 - v03: ritmo mais calmo; pausas depois das digitações e no fim de cada ação (40 → 50 s).
 - v04: efeitos sonoros enviados para o projeto, sincronizados no pico de cada ação.
+- v05: assinatura final com o lettering JACK animado como o intro de jackdsgn.github.io.
 
 | Arquivo | O que é |
 |---|---|
-| `out/claude-video-v04-50s-SFX.mp4` | Vídeo completo, 50 s, H.264 + AAC com os efeitos |
+| `out/claude-video-v05-54s-SFX-assinatura.mp4` | Vídeo completo, 54,2 s, H.264 + AAC com os efeitos |
 | `out/comparacao-storyboard-v02.png` | Storyboard (em cima) × render (embaixo), um quadro por cena |
 | `film.html` | Motor: `window.seek(t)` determinístico, todas as cenas em texto e vetor |
 
@@ -28,6 +29,19 @@ storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 50 s
 
 Cores do briefing: fundo `#F7F4ED`, texto `#24231F`, terracota `#D77A5C`, linha `#DAD7CC`, cards `#FFFFFF`.
 Fontes: Instrument Serif (candidata, não a fonte original da referência), Inter e JetBrains Mono, todas OFL, locais em `assets/`.
+
+## Assinatura final
+
+Depois de "Crie com direção." (40,0 s no roteiro), a cena e o logo do canto saem e o lettering JACK
+entra com a coreografia do intro do site (`jackTimeline` em `assets/js/site.js` de
+jackdsgn.github.io), recalculada por quadro em vez de usar o GSAP:
+
+1. K surge no centro girando de −180° a 0° e escalando de 0 a 1 (0,6 s, `back.out(1.7)`);
+2. K desliza para o lugar (0,8 s, `expo.inOut`);
+3. J, A e C sobem pela máscara (0,7 s cada, `expo.out`, intervalo de 0,13 s) e o JACK fica parado até o fim.
+
+Mesmo SVG e mesma máscara do site, em Deep Blue `#202030` sobre o fundo claro, com 620 px de largura e
+centro em y ≈ 860. Sons: whoosh no giro e no deslize, pops nas letras e clique no JACK completo.
 
 ## Ritmo
 
@@ -60,7 +74,7 @@ foi definida pela análise de envelope e espectro:
 | `whooshes_864.mp3` | 5 whooshes (picos em 0,10/1,05/2,67/4,78/6,43 s) | troca de cena, alternando os 5 |
 
 `audio/sfx_mix.py` lê a lista `PACE` do `film.html` e põe o pico de cada som no momento visual da
-ação (63 deixas, desvio medido ≤ 10 ms). Nas cascatas o tom sobe a cada item e o volume baixa.
+ação (69 deixas, desvio medido ≤ 10 ms). Nas cascatas o tom sobe a cada item e o volume baixa.
 Sem locução, o bus de efeitos fica em −23 LUFS com pico em −2 dBFS (`MASTER_DB = 7`). Quando a voz
 entrar, voltar `MASTER_DB` a 0 e mixar a voz para −16 LUFS integrado, true peak abaixo de −1 dBTP.
 
@@ -71,7 +85,7 @@ npm install
 node tools/stills.mjs /tmp/stills 1.0 3.6 5.6   # quadros avulsos
 node tools/render.mjs                           # [início] [fim=DURATION] [fps=30] [sub=4] → frames/master.mkv
 python3 audio/sfx_mix.py                        # → audio/sfx.wav
-tools/encode.sh claude-video-v04-50s-SFX audio/sfx.wav   # → out/*.mp4
+tools/encode.sh claude-video-v05-54s-SFX-assinatura audio/sfx.wav   # → out/*.mp4
 ```
 
 Para ver um quadro: `film.html?t=4.6`. Para tocar em tempo real: `film.html?play`.
