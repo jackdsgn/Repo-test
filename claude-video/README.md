@@ -4,15 +4,16 @@ Motion explicativo PT-BR, recriado a partir de `Motion_PTBR_Roteiro_Prompts_v01.
 storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 50 s no total
 (roteiro de 40 s + pausas de leitura).
 
-**Status:** v03 com as 13 cenas, 50 s, **sem áudio**.
+**Status:** v04 com as 13 cenas, 50 s, **com efeitos sonoros e sem locução**.
 
 - v01: prévia de 0–8 s; animações aprovadas.
 - v02: composição escalada para ocupar o quadro vertical; logo em laranja e preto; cenas 05–13.
 - v03: ritmo mais calmo; pausas depois das digitações e no fim de cada ação (40 → 50 s).
+- v04: efeitos sonoros enviados para o projeto, sincronizados no pico de cada ação.
 
 | Arquivo | O que é |
 |---|---|
-| `out/claude-video-v03-50s-SEM-AUDIO.mp4` | Vídeo completo, 50 s, H.264, faixa AAC silenciosa |
+| `out/claude-video-v04-50s-SFX.mp4` | Vídeo completo, 50 s, H.264 + AAC com os efeitos |
 | `out/comparacao-storyboard-v02.png` | Storyboard (em cima) × render (embaixo), um quadro por cena |
 | `film.html` | Motor: `window.seek(t)` determinístico, todas as cenas em texto e vetor |
 
@@ -47,13 +48,30 @@ cada `hold` congela um estado estável depois que a ação termina (o cursor con
 | 10 · ajuste concluído | +1,2 s |
 | 11 · resumo | 1 s → 2 s |
 
+## Efeitos sonoros
+
+`audio/sfx/` guarda os três arquivos enviados. Como não foi possível ouvi-los, a função de cada um
+foi definida pela análise de envelope e espectro:
+
+| Arquivo | Perfil | Uso |
+|---|---|---|
+| `pop-grave_495.mp3` | impacto curto e grave (96% < 200 Hz) | entrada de cards e painéis |
+| `clique_503.mp3` | ataque seco e brilhante, pico em 0,84 s | envio, checks, o "7", o marcador |
+| `whooshes_864.mp3` | 5 whooshes (picos em 0,10/1,05/2,67/4,78/6,43 s) | troca de cena, alternando os 5 |
+
+`audio/sfx_mix.py` lê a lista `PACE` do `film.html` e põe o pico de cada som no momento visual da
+ação (63 deixas, desvio medido ≤ 10 ms). Nas cascatas o tom sobe a cada item e o volume baixa.
+Sem locução, o bus de efeitos fica em −23 LUFS com pico em −2 dBFS (`MASTER_DB = 7`). Quando a voz
+entrar, voltar `MASTER_DB` a 0 e mixar a voz para −16 LUFS integrado, true peak abaixo de −1 dBTP.
+
 ## Pipeline
 
 ```bash
 npm install
 node tools/stills.mjs /tmp/stills 1.0 3.6 5.6   # quadros avulsos
 node tools/render.mjs                           # [início] [fim=DURATION] [fps=30] [sub=4] → frames/master.mkv
-tools/encode.sh claude-video-v03-50s-SEM-AUDIO  # → out/*.mp4
+python3 audio/sfx_mix.py                        # → audio/sfx.wav
+tools/encode.sh claude-video-v04-50s-SFX audio/sfx.wav   # → out/*.mp4
 ```
 
 Para ver um quadro: `film.html?t=4.6`. Para tocar em tempo real: `film.html?play`.
@@ -61,4 +79,4 @@ Para ver um quadro: `film.html?t=4.6`. Para tocar em tempo real: `film.html?play
 ## Pendências
 
 - Locução PT-BR gravada (os tempos de legenda e de ação são estimados até haver timestamps reais).
-- Trilha licenciada e efeitos (digitação, entrada de cards, envio, conclusão).
+- Trilha licenciada e som de digitação (não veio entre os efeitos enviados).
