@@ -4,16 +4,17 @@
 <meta charset="utf-8">
 <title>Vídeos com Claude · Versão clara</title>
 <!--
-  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps.
+  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps · 40 s.
 
   Roteiro: Motion_PTBR_Roteiro_Prompts_v01.md · Storyboard: Storyboard_Claude_Claro_v01_APROVACAO.pdf.
-  Grade do storyboard (Reels): área útil x 90–910 / y 300–1240, coluna centrada em x = 500,
-  legenda em y 1058–1144, logo Jackdsgn claro em x 108 / y 1184 / 150 px.
+
+  As cenas são desenhadas nas coordenadas do storyboard (coluna centrada em x = 500, área
+  y 300–1040) dentro de #content, que é escalado em 1,4× para ocupar o quadro vertical inteiro:
+  margem lateral de 72 px, progresso em y 275 e ilustração até y ≈ 1310. Legenda (y ≈ 1400) e logo
+  ficam fora da escala. Os últimos ~370 px ficam livres para a interface do Reels.
 
   O quadro é função pura do tempo: window.seek(t). Sem CSS transitions, timers,
   relógio do navegador ou valores aleatórios. Abra com ?t=4.6 para um quadro, ?play para tocar.
-
-  Cenas montadas nesta versão: 01 a 04 (0–10 s). Prévia de aprovação: 0–8 s, sem áudio.
 -->
 <style>
 @font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;src:url("assets/InstrumentSerif-Regular.woff2") format("woff2")}
@@ -23,128 +24,256 @@
 
 :root{
   --bg:#F7F4ED; --ink:#24231F; --accent:#D77A5C; --line:#DAD7CC; --card:#FFFFFF;
-  --muted:#8C887E; --soft:#F2EEE7;
+  --muted:#8C887E; --soft:#F2EEE7; --field:#F7F5F0; --chip:#EFEBE4;
   --serif:"Instrument Serif",serif; --sans:"Inter",sans-serif; --mono:"JetBrains Mono",monospace;
+  --shadow:0 1px 2px rgba(36,35,31,.05),0 14px 26px rgba(36,35,31,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 #stage{position:absolute;inset:0;overflow:hidden;
   background:
-    radial-gradient(ellipse 620px 520px at 230px 900px, rgba(226,170,146,.16), transparent 70%),
-    radial-gradient(ellipse 700px 600px at 780px 420px, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(ellipse 870px 730px at 160px 1115px, rgba(226,170,146,.16), transparent 70%),
+    radial-gradient(ellipse 980px 840px at 930px 445px, rgba(255,255,255,.55), transparent 70%),
     var(--bg)}
+#content{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;transform:translate(-160px,-145px) scale(1.4)}
 .abs{position:absolute;left:0;top:0;transform-origin:50% 50%}
 .serif{font-family:var(--serif);font-weight:400;letter-spacing:-.02em}
 .it{font-style:italic;color:var(--accent)}
+.card{background:var(--card);box-shadow:var(--shadow);overflow:hidden}
 
-/* Cena 01 */
+/* 01 */
 .eyebrow{width:820px;left:90px;text-align:center;font-weight:700;font-size:26px;letter-spacing:.11em;color:var(--accent)}
 .s1line{width:820px;left:90px;text-align:center;font-size:164px;line-height:1}
-.clip{position:absolute;top:0;height:42px;width:185px;border-radius:9px;background:#E0876A}
+.clip{position:absolute;top:0;height:42px;width:160px;border-radius:9px;background:#E0876A}
 #playhead{position:absolute;top:-14px;width:3px;height:72px;margin-left:-1.5px;border-radius:2px;background:var(--ink)}
 
-/* Cena 02 */
+/* 02 */
 #s2a{width:820px;left:90px;text-align:center;font-size:164px;line-height:1}
 #s2n{width:820px;left:90px;text-align:center;font-size:470px;line-height:1;color:var(--accent);-webkit-text-stroke:7px var(--accent);transform-origin:50% 62%}
 #s2p{width:820px;left:90px;text-align:center;font-size:80px;font-weight:500;letter-spacing:-.01em}
 
-/* Cabeçalho dos passos */
+/* Cabeçalho */
 .seg{position:absolute;top:0;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
 .seg i{position:absolute;inset:0;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
 .slabel{font-weight:600;font-size:22px;color:var(--accent);white-space:nowrap}
 .stitle{font-size:94px;line-height:1;white-space:nowrap}
 
-/* Chat (componente reutilizado nas cenas 03, 07, 08 e 10) */
-.chat{width:560px;height:400px;background:var(--card);border-radius:24px;
-  box-shadow:0 1px 2px rgba(36,35,31,.05),0 14px 26px rgba(36,35,31,.08);border:1px solid #EEEBE4;overflow:hidden}
+/* Chat (cenas 03, 07, 08 e 10) */
+.chat{border-radius:24px;border:1px solid #EEEBE4}
 .chat .bar{position:absolute;left:0;top:0;right:0;height:44px;border-bottom:1px solid #EFECE6}
 .chat .dot{position:absolute;top:16px;width:12px;height:12px;border-radius:50%}
 .chat .name{position:absolute;left:0;right:0;top:0;line-height:44px;text-align:center;font-size:16px;font-weight:500;color:#5E5B54}
-.chat .hello{position:absolute;left:0;right:0;top:152px;text-align:center;font-size:28px;font-weight:650;letter-spacing:-.01em}
-.chat .input{position:absolute;left:16px;right:16px;bottom:18px;height:66px;border-radius:15px;background:#F7F5F0;border:1px solid #ECE8E0}
-.chat .ph{position:absolute;left:19px;top:0;line-height:64px;font-size:18px;color:#8C887E}
-.chat .send{position:absolute;right:14px;top:15px;width:34px;height:34px;border-radius:9px;background:#E7E3DA}
-.note{width:560px;text-align:center;font-size:19px;color:#8C887E}
+.chat .hello{position:absolute;left:0;right:0;text-align:center;font-size:28px;font-weight:650;letter-spacing:-.01em}
+.field{position:absolute;border-radius:15px;background:var(--field);border:1px solid #ECE8E0}
+.ph{position:absolute;left:19px;top:0;line-height:72px;font-size:18px;color:var(--muted)}
+.send{position:absolute;width:48px;height:48px;border-radius:11px;background:#E7E3DA}
+.send svg{position:absolute;left:0;top:0}
+.note{width:560px;text-align:center;font-size:19px;color:var(--muted)}
+.chip{position:relative;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 17px 0 14px;border-radius:22px;background:var(--chip);font-size:17px;font-weight:500;color:#3D3A35;white-space:nowrap}
+.tag{display:inline-flex;align-items:center;height:38px;padding:0 15px;border-radius:19px;background:#ECE8E1;font-size:18px;color:#7A766E}
+.bubble{position:absolute;background:#F3EEE7;border-radius:18px 18px 6px 18px;color:var(--ink)}
+.caret{display:inline-block;width:2.5px;background:var(--accent);vertical-align:-4px;margin-left:3px}
 
-/* Cena 04 */
-.guide{width:232px;height:416px;background:var(--card);border-radius:16px;overflow:hidden;
-  box-shadow:0 1px 2px rgba(36,35,31,.05),0 14px 26px rgba(36,35,31,.08)}
+/* 04 */
+.guide{width:232px;height:416px;border-radius:16px}
 .guide .head{position:absolute;left:0;right:0;top:0;height:68px;background:var(--accent)}
 .guide .head span{position:absolute;left:25px;top:0;line-height:70px;color:#fff;font-weight:800;font-size:23px;letter-spacing:.005em}
-.item{position:absolute;left:25px;height:34px;width:200px}
+.item{position:absolute;height:34px;width:200px}
 .item .ck{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;background:#F2EEE8}
 .item .ck svg{position:absolute;left:8px;top:9px}
 .item span{position:absolute;left:58px;top:0;line-height:34px;font-size:19px;font-weight:500}
-.ref{width:184px;height:226px;background:var(--card);border-radius:14px;
-  box-shadow:0 1px 2px rgba(36,35,31,.05),0 12px 24px rgba(36,35,31,.09)}
+.ref{width:184px;height:226px;border-radius:14px}
 .ref b{position:absolute;left:18px;top:14px;font-weight:600;font-size:14px;font-style:italic}
 .ref svg{position:absolute;left:14px;top:44px;border-radius:6px}
 
-/* Legenda e logo */
-#cap{left:90px;top:1058px;width:820px;height:44px;display:flex;align-items:center;justify-content:center}
-#cap div{position:absolute;width:820px;text-align:center;font-weight:650;font-size:34px;letter-spacing:-.005em;white-space:nowrap}
+/* 05 */
+.editor{border-radius:20px;border:1px solid #EEEBE4}
+.editor .file{position:absolute;left:96px;top:0;line-height:52px;font-size:17px;font-weight:500;color:#3D3A35}
+.editor .pill{position:absolute;right:14px;top:12px;height:28px;padding:0 12px;border-radius:14px;background:#FBE8DF;color:var(--accent);font-size:16px;font-weight:500;line-height:28px}
+.code{position:absolute;left:46px;font-family:var(--mono);font-size:22px;line-height:38px;white-space:pre;color:var(--ink)}
+
+/* 06 */
+.thumb{width:183px;height:160px;border-radius:12px}
+.thumb svg{position:absolute;left:14px;top:14px;border-radius:6px}
+.thumb span{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:18px;font-weight:500}
+.media{width:281px;height:133px;border-radius:14px}
+.media b{position:absolute;top:22px;font-weight:500;font-size:19px}
+
+/* 09 */
+.proc{width:360px;text-align:center;font-size:34px;font-weight:650;letter-spacing:-.01em}
+
+/* 11 */
+.row{position:absolute;left:0;width:470px;height:66px}
+.row .ok{position:absolute;left:38px;top:13px;width:40px;height:40px;border-radius:50%;background:var(--accent)}
+.row .ok svg{position:absolute;left:10px;top:12px}
+.row span{position:absolute;left:102px;top:0;line-height:66px;font-size:24px}
+.row i{position:absolute;left:32px;right:32px;bottom:0;height:1px;background:#EFECE6}
+
+/* 13 */
+.pillbig{width:200px;height:76px;border-radius:38px;background:#fff;border:2px solid var(--line);text-align:center;line-height:72px;font-size:30px;font-weight:500}
+
+/* Legenda e logo (fora da escala) */
+#cap{left:72px;top:1370px;width:936px;height:60px}
+#cap div{position:absolute;left:0;top:0;width:936px;line-height:60px;text-align:center;font-weight:650;font-size:42px;letter-spacing:-.005em;white-space:nowrap}
 #cap em{font-style:normal}
-#logo{left:108px;top:1184px;width:150px;height:39px}
+#logo{left:72px;top:1492px;width:180px;height:47px}
 </style>
 </head>
 <body>
 <div id="stage">
+<div id="content">
 
   <!-- 01 · Abertura -->
-  <div id="s1">
-    <div class="abs eyebrow" id="s1e" style="top:366px">UM GUIA PARA INICIANTES</div>
-    <div class="abs s1line serif" id="s1l0" style="top:420px">Como editar</div>
-    <div class="abs s1line serif" id="s1l1" style="top:562px">vídeos com</div>
-    <div class="abs s1line serif it" id="s1l2" style="top:706px">Claude</div>
-    <div class="abs" id="s1t" style="left:116px;top:908px;width:768px;height:42px">
-      <div class="clip" id="c0" style="left:0"></div>
-      <div class="clip" id="c1" style="left:194px"></div>
-      <div class="clip" id="c2" style="left:388px"></div>
-      <div class="clip" id="c3" style="left:582px"></div>
-      <div id="playhead"></div>
-    </div>
+  <div class="abs eyebrow" id="s1e" style="top:366px">UM GUIA PARA INICIANTES</div>
+  <div class="abs s1line serif" id="s1l0" style="top:420px">Como editar</div>
+  <div class="abs s1line serif" id="s1l1" style="top:562px">vídeos com</div>
+  <div class="abs s1line serif it" id="s1l2" style="top:706px">Claude</div>
+  <div class="abs" id="s1t" style="left:165px;top:908px;width:670px;height:42px">
+    <div class="clip" id="c0" style="left:0"></div>
+    <div class="clip" id="c1" style="left:170px"></div>
+    <div class="clip" id="c2" style="left:340px"></div>
+    <div class="clip" id="c3" style="left:510px"></div>
+    <div id="playhead"></div>
   </div>
 
   <!-- 02 · Sete passos -->
-  <div id="s2">
-    <div class="abs serif" id="s2a" style="top:300px">Comece por</div>
-    <div class="abs serif" id="s2n" style="top:452px">7</div>
-    <div class="abs" id="s2p" style="top:840px">passos</div>
-  </div>
+  <div class="abs serif" id="s2a" style="top:300px">Comece por</div>
+  <div class="abs serif" id="s2n" style="top:452px">7</div>
+  <div class="abs" id="s2p" style="top:840px">passos</div>
 
-  <!-- Cabeçalho dos passos (03–09) -->
+  <!-- Cabeçalho dos passos (gerado) -->
   <div class="abs" id="prog" style="left:170px;top:312px;width:660px;height:4px"></div>
-  <div class="abs slabel" id="h1l" style="left:170px;top:340px">Passo 1</div>
-  <div class="abs stitle serif" id="h1t" style="left:168px;top:368px">Abra o <span class="it">Claude</span></div>
-  <div class="abs slabel" id="h2l" style="left:170px;top:340px">Passo 2</div>
-  <div class="abs stitle serif" id="h2t" style="left:168px;top:368px">Defina o <span class="it">estilo</span></div>
+  <div id="hdr"></div>
 
   <!-- 03 · Passo 1 -->
-  <div class="abs chat" id="chat" style="left:220px;top:560px">
+  <div class="abs card chat" id="chat1" style="left:220px;top:560px;width:560px;height:400px">
     <div class="bar">
       <div class="dot" id="d0" style="left:18px;background:#FF5F57"></div>
       <div class="dot" id="d1" style="left:38px;background:#FEBC2E"></div>
       <div class="dot" id="d2" style="left:58px;background:#28C840"></div>
       <div class="name">Claude</div>
     </div>
-    <div class="hello" id="hello">O que vamos criar hoje?</div>
-    <div class="input" id="input">
-      <div class="ph">Escreva sua mensagem…</div>
-      <div class="send"><svg width="34" height="34" viewBox="0 0 34 34"><path d="M17 23V11M12 16l5-5 5 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="hello" id="hello1" style="top:152px">O que vamos criar hoje?</div>
+    <div class="field abs" id="input1" style="left:16px;top:316px;width:526px;height:66px">
+      <div class="ph" style="line-height:64px">Escreva sua mensagem…</div>
+      <div class="send" style="right:14px;top:15px;width:34px;height:34px;border-radius:9px"><svg width="34" height="34" viewBox="0 0 34 34"><path d="M17 23V11M12 16l5-5 5 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
   </div>
-  <div class="abs note" id="note" style="left:220px;top:983px">Ferramentas de vídeo configuradas</div>
+  <div class="abs note" id="note1" style="left:220px;top:983px">Ferramentas de vídeo configuradas</div>
 
   <!-- 04 · Passo 2 -->
-  <div class="abs guide" id="guide" style="left:300px;top:530px">
-    <div class="head"><span>GUIA VISUAL</span></div>
-  </div>
+  <div class="abs card guide" id="guide" style="left:300px;top:530px"><div class="head"><span>GUIA VISUAL</span></div></div>
   <div id="items"></div>
   <div id="refs"></div>
 
+  <!-- 05 · Passo 3 -->
+  <div class="abs card editor" id="editor" style="left:230px;top:570px;width:545px;height:418px">
+    <div class="bar" style="position:absolute;left:0;right:0;top:0;height:52px;border-bottom:1px solid #EFECE6">
+      <div class="dot" style="position:absolute;left:20px;top:20px;width:12px;height:12px;border-radius:50%;background:#FF5F57"></div>
+      <div class="dot" style="position:absolute;left:40px;top:20px;width:12px;height:12px;border-radius:50%;background:#FEBC2E"></div>
+      <div class="dot" style="position:absolute;left:60px;top:20px;width:12px;height:12px;border-radius:50%;background:#28C840"></div>
+      <svg style="position:absolute;left:116px;top:17px" width="14" height="18" viewBox="0 0 14 18"><path d="M1 2a1 1 0 0 1 1-1h7l4 4v11a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" fill="#D9D5CD"/><path d="M9 1v4h4" fill="#C5C0B6"/></svg>
+      <div class="file" style="left:140px">SKILL.md</div>
+      <div class="pill" id="pill">Opcional</div>
+    </div>
+    <div class="code" id="code" style="top:111px"></div>
+  </div>
+
+  <!-- 06 · Passo 4 -->
+  <div id="thumbs"></div>
+  <div class="abs card media" id="mImg" style="left:216px;top:887px">
+    <svg style="position:absolute;left:22px;top:26px" width="100" height="86" viewBox="0 0 100 86"><rect x="16" y="0" width="80" height="62" rx="8" fill="#EFE7DE"/><rect x="2" y="12" width="84" height="70" rx="8" fill="#fff" stroke="#E2D8CC" stroke-width="3"/><path d="M10 74l22-26 14 14 10-10 22 22z" fill="#D9C2B0"/><circle cx="66" cy="32" r="8" fill="#D77A5C"/></svg>
+    <b style="left:143px">Imagens</b>
+    <i style="position:absolute;left:144px;top:64px;width:110px;height:6px;border-radius:3px;background:#E6E2DA"></i>
+    <i style="position:absolute;left:144px;top:82px;width:90px;height:6px;border-radius:3px;background:#E6E2DA"></i>
+    <i style="position:absolute;left:144px;top:100px;width:64px;height:6px;border-radius:3px;background:#E6E2DA"></i>
+  </div>
+  <div class="abs card media" id="mAud" style="left:513px;top:887px">
+    <svg style="position:absolute;left:28px;top:40px" width="34" height="52" viewBox="0 0 34 52"><rect x="9" y="2" width="16" height="28" rx="8" fill="#24231F"/><path d="M3 22a14 14 0 0 0 28 0M17 36v10M9 48h16" fill="none" stroke="#24231F" stroke-width="3" stroke-linecap="round"/></svg>
+    <b style="left:92px">Áudios</b>
+    <svg id="wave" style="position:absolute;left:90px;top:56px" width="170" height="52" viewBox="0 0 170 52"></svg>
+  </div>
+
+  <!-- 07–08 · Passos 5 e 6: o mesmo chat persiste -->
+  <div class="abs card chat" id="chat2" style="left:176px;top:550px;width:648px;height:472px">
+    <div class="bar">
+      <div class="dot" style="left:20px;background:#FF5F57"></div>
+      <div class="dot" style="left:40px;background:#FEBC2E"></div>
+      <div class="dot" style="left:60px;background:#28C840"></div>
+      <div class="name">Claude</div>
+    </div>
+    <div class="hello" id="hello2" style="top:178px;font-size:30px">O que vamos criar hoje?</div>
+    <div class="bubble" id="bubble2" style="right:19px;top:84px;width:362px;padding:16px 20px;font-size:20px;line-height:28px">Crie um vídeo vertical de 40 segundos, seguindo meu guia visual, com narração em português e animações suaves.</div>
+    <div class="abs" id="reply2" style="left:33px;top:300px;width:300px;height:70px">
+      <i class="rd" style="position:absolute;left:0;top:0;width:15px;height:15px;border-radius:50%;background:var(--accent)"></i>
+      <i class="rd" style="position:absolute;left:23px;top:0;width:15px;height:15px;border-radius:50%;background:var(--accent)"></i>
+      <i class="rd" style="position:absolute;left:46px;top:0;width:15px;height:15px;border-radius:50%;background:var(--accent)"></i>
+      <span id="replyTxt" style="position:absolute;left:0;top:28px;font-size:22px;white-space:nowrap">Preparando a prévia…</span>
+    </div>
+    <div class="field" id="field2"></div>
+    <div class="abs" id="chips" style="left:33px;top:338px;width:470px;display:flex;flex-wrap:wrap;gap:10px 9px"></div>
+    <div class="abs code" id="typed" style="left:46px;top:262px;font-family:var(--sans);font-size:26px;line-height:35px;white-space:pre"></div>
+    <div class="abs" id="tags" style="left:46px;top:398px;display:flex;gap:10px"></div>
+    <div class="abs ph" id="ph2" style="left:44px;top:388px;line-height:58px">Escreva sua mensagem…</div>
+    <div class="send" id="send2" style="left:569px;top:389px"><svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 32V16M17 23l7-7 7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+
+  <!-- 09 · Passo 7 -->
+  <svg class="abs" id="ring" style="left:320px;top:597px" width="360" height="360" viewBox="0 0 360 360">
+    <circle cx="180" cy="180" r="168" fill="none" stroke="#E4E0D8" stroke-width="10"/>
+    <circle id="arc" cx="180" cy="180" r="168" fill="none" stroke="#D77A5C" stroke-width="10" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" transform="rotate(-90 180 180)"/>
+    <path id="done" d="M140 182l28 28 54-58" fill="none" stroke="#D77A5C" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+  </svg>
+  <div class="abs proc" id="procTxt" style="left:320px;top:744px">Processando</div>
+  <div class="abs" id="procDots" style="left:467px;top:809px;width:66px;height:14px">
+    <i class="pd" style="position:absolute;left:0;top:0;width:13px;height:13px;border-radius:50%;background:var(--accent)"></i>
+    <i class="pd" style="position:absolute;left:26px;top:0;width:13px;height:13px;border-radius:50%;background:var(--accent)"></i>
+    <i class="pd" style="position:absolute;left:52px;top:0;width:13px;height:13px;border-radius:50%;background:var(--accent)"></i>
+  </div>
+  <div class="abs note" id="tvar" style="left:220px;top:970px">Tempo variável</div>
+
+  <!-- 10 · Revisão -->
+  <div class="abs card chat" id="chat3" style="left:180px;top:553px;width:643px;height:464px">
+    <div class="bar">
+      <div class="dot" style="left:20px;background:#FF5F57"></div>
+      <div class="dot" style="left:40px;background:#FEBC2E"></div>
+      <div class="dot" style="left:60px;background:#28C840"></div>
+      <div class="name">Claude</div>
+    </div>
+    <div class="bubble abs" id="bubble3" style="left:auto;right:26px;top:88px;height:73px;padding:0 24px;line-height:73px;font-size:22px;background:#F6E6DD;white-space:nowrap">Deixe a abertura mais rápida.</div>
+    <div class="abs" id="fix" style="left:31px;top:192px;width:537px;height:125px;border:1px solid #ECE8E0;border-radius:16px;background:#fff">
+      <div style="position:absolute;left:22px;top:20px;width:50px;height:50px;border-radius:50%;background:#E8EDE4"></div>
+      <svg style="position:absolute;left:22px;top:20px" width="50" height="50" viewBox="0 0 50 50"><path id="fixCk" d="M16 26l6 6 12-13" fill="none" stroke="#2F3A2E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+      <div style="position:absolute;left:92px;top:28px;font-size:23px;font-weight:600">Abertura ajustada</div>
+      <div style="position:absolute;left:92px;top:80px;width:421px;height:14px;border-radius:7px;background:#F0EDE8;overflow:hidden"><i id="fixBar" style="position:absolute;inset:0;border-radius:7px;background:var(--accent);transform-origin:0 50%"></i></div>
+    </div>
+    <div class="field" style="left:19px;top:366px;width:605px;height:76px">
+      <div class="ph">Escreva sua mensagem…</div>
+      <div class="send" style="right:16px;top:14px"><svg width="48" height="48" viewBox="0 0 48 48"><path d="M24 32V16M17 23l7-7 7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div>
+
+  <!-- 11 · Resumo -->
+  <div class="abs card" id="sum" style="left:268px;top:508px;width:470px;height:508px;border-radius:22px"></div>
+
+  <!-- 12 · Salvar -->
+  <div class="abs" id="saveMask" style="left:90px;top:286px;width:820px;height:250px;overflow:hidden">
+    <div class="abs serif" id="saveT" style="left:0;top:21px;width:820px;text-align:center;font-size:235px;line-height:1">Salve.</div>
+  </div>
+  <svg class="abs" id="mark" style="left:378px;top:568px;transform-origin:50% 0" width="231" height="324" viewBox="0 0 231 324"><path d="M18 0h195a18 18 0 0 1 18 18v296a6 6 0 0 1-9.4 4.9L115.5 244 9.4 318.9A6 6 0 0 1 0 314V18A18 18 0 0 1 18 0z" fill="#D77A5C"/></svg>
+  <div class="abs" id="saveSub" style="left:90px;top:960px;width:820px;text-align:center;font-size:56px;font-weight:650;letter-spacing:-.015em">Para testar depois.</div>
+
+  <!-- 13 · Fechamento -->
+  <div class="abs s1line serif" id="endA" style="top:445px">Crie com</div>
+  <div class="abs s1line serif it" id="endB" style="top:610px">direção.</div>
+  <div class="abs pillbig" id="p0" style="left:178px;top:825px">Roteiro</div>
+  <div class="abs pillbig" id="p1" style="left:400px;top:825px">Motion</div>
+  <div class="abs pillbig" id="p2" style="left:622px;top:825px">Revisão</div>
+
+</div>
   <div class="abs" id="cap"></div>
-  <img class="abs" id="logo" src="assets/logo-jackdsgn-horizontal-claro.svg" alt="">
+  <img class="abs" id="logo" src="assets/logo-jackdsgn-horizontal-laranja-preto.svg" alt="">
 </div>
 
 <script>
@@ -170,127 +299,267 @@ const INOUT = bezier(0.65, 0, 0.35, 1);    // saídas e deslocamentos
 const prog = (t, a, b) => clamp((t - a) / (b - a));
 const back = (p, s = 1.5) => 1 + (s + 1) * Math.pow(p - 1, 3) + s * Math.pow(p - 1, 2);   // acomodação curta
 
-// entrada: alpha 0→1, deslocamento dy→0, escala s0→1
 const enter = (t, a, d = 0.4) => OUT(prog(t, a, a + d));
 const leave = (t, a, d = 0.2) => 1 - INOUT(prog(t, a, a + d));
 
 const $ = id => document.getElementById(id);
-function put(el, { o = 1, x = 0, y = 0, s = 1, r = 0, sx = null } = {}) {
+function put(el, { o = 1, x = 0, y = 0, s = 1, r = 0 } = {}) {
   el.style.opacity = o.toFixed(4);
   el.style.visibility = o <= 0.001 ? 'hidden' : 'visible';
-  const sc = sx === null ? `scale(${s.toFixed(4)})` : `scale(${sx.toFixed(4)},${s.toFixed(4)})`;
-  el.style.transform = `translate(${x.toFixed(2)}px,${y.toFixed(2)}px) rotate(${r.toFixed(3)}deg) ${sc}`;
+  el.style.transform = `translate(${x.toFixed(2)}px,${y.toFixed(2)}px) rotate(${r.toFixed(3)}deg) scale(${s.toFixed(4)})`;
 }
-// elemento com entrada (alpha + dy + escala) e saída (alpha)
+// entrada (alpha + deslocamento + escala) e saída (alpha)
 function show(el, t, a, d, out, { dy = 24, s0 = 1, dx = 0, r0 = 0, r = 0, outD = 0.2 } = {}) {
   const p = enter(t, a, d), q = out == null ? 1 : leave(t, out, outD);
   put(el, { o: p * q, x: (1 - p) * dx, y: (1 - p) * dy, s: lerp(s0, 1, p), r: lerp(r0, r, p) });
 }
+const draw = (path, p) => { path.style.strokeDashoffset = (1 - p).toFixed(4); };
+const make = (parent, cls, html, style = '') => {
+  const d = document.createElement('div'); d.className = cls; d.innerHTML = html; d.style.cssText = style;
+  parent.appendChild(d); return d;
+};
+const CHECK = c => `<svg width="18" height="16" viewBox="0 0 18 16"><path d="M2 8.5l4.6 4.5L16 3" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`;
 
 // ---------- construção ----------
 // progresso de 7 segmentos
 const SEGS = [];
 for (let i = 0; i < 7; i++) {
-  const w = (660 - 6 * 8) / 7, d = document.createElement('div');
-  d.className = 'seg'; d.style.left = (i * (w + 8)) + 'px'; d.style.width = w + 'px';
-  d.innerHTML = '<i></i>'; $('prog').appendChild(d); SEGS.push(d.firstChild);
+  const w = (660 - 6 * 8) / 7;
+  SEGS.push(make($('prog'), 'seg', '<i></i>', `left:${i * (w + 8)}px;width:${w}px`).firstChild);
 }
+const FILL = [4.04, 6.02, 10.02, 14.02, 18.52, 21.02, 26.52];
 
-// guia visual
-const ITEMS = ['Paleta', 'Tipografia', 'Ritmo', 'Legendas', 'Áudio'].map((txt, i) => {
-  const d = document.createElement('div');
-  d.className = 'abs item'; d.style.left = '325px'; d.style.top = (637 + 59 * i) + 'px';
-  d.innerHTML = `<div class="ck"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M2 8.5l4.6 4.5L16 3" fill="none" stroke="#8F8A80" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div><span>${txt}</span>`;
-  $('items').appendChild(d); return d;
-});
+// cabeçalhos: label + título; troca mantendo a âncora
+const HDR = [
+  { l: 'Passo 1', h: 'Abra o <span class="it">Claude</span>', la: 3.96, ld: 0.39, ta: 4.05, out: 5.80, outD: 0.18 },
+  { l: 'Passo 2', h: 'Defina o <span class="it">estilo</span>', la: 6.00, ta: 6.05, out: 9.78 },
+  { l: 'Passo 3', h: 'Ative sua <span class="it">skill</span>', la: 10.00, ta: 10.05, out: 13.78 },
+  { l: 'Passo 4', h: 'Separe os <span class="it">materiais</span>', la: 14.00, ta: 14.05, out: 18.28 },
+  { l: 'Passo 5', h: 'Envie os <span class="it">arquivos</span>', la: 18.50, ta: 18.55, out: 20.80 },
+  { l: 'Passo 6', h: 'Explique o <span class="it">resultado</span>', la: 21.00, ta: 21.05, out: 26.28 },
+  { l: 'Passo 7', h: 'Aguarde a <span class="it">prévia</span>', la: 26.50, ta: 26.55, out: 30.28 },
+  { l: 'Revisão', h: 'Peça <span class="it">ajustes</span>', la: 30.50, ta: 30.55, out: 32.78 },
+  { l: 'Resumo', h: 'Tudo <span class="it">pronto</span>', la: 33.00, ta: 33.05, out: 33.80 },
+].map(h => ({
+  ...h,
+  le: make($('hdr'), 'abs slabel', h.l, 'left:170px;top:340px'),
+  te: make($('hdr'), 'abs stitle serif', h.h, 'left:168px;top:368px'),
+}));
 
-// referências de estilo (ilustrações autorais em vetor)
+// 04 · guia visual e referências (ilustrações autorais em vetor)
+const ITEMS = ['Paleta', 'Tipografia', 'Ritmo', 'Legendas', 'Áudio'].map((txt, i) =>
+  make($('items'), 'abs item', `<div class="ck">${CHECK('#8F8A80')}</div><span>${txt}</span>`, `left:325px;top:${637 + 59 * i}px`));
 const ART = [
   `<rect width="156" height="156" fill="#F3EBE3"/><path d="M0 156V92c22 0 38 16 38 40v24z" fill="#E8DCCF"/><path d="M16 74a56 56 0 0 1 112 0z" fill="#D77A5C"/><rect x="0" y="74" width="62" height="82" fill="#ECE1D6"/><path d="M92 156c0-46 24-74 60-74" fill="none" stroke="#24231F" stroke-width="2"/>`,
   `<rect width="156" height="156" fill="#F3EBE3"/><circle cx="52" cy="40" r="18" fill="#D77A5C"/><path d="M26 156V112a34 34 0 0 1 68 0v44z" fill="#E6D9CC"/><path d="M78 156l14-82a22 22 0 0 1 44 6l-12 76z" fill="#24231F"/><path d="M18 140L32 52" stroke="#D77A5C" stroke-width="2.4"/>`,
   `<rect width="156" height="156" fill="#F3EBE3"/><path d="M96 0h60v84c-30 6-56-10-60-38z" fill="#E6D9CC"/><path d="M0 70c30-4 56 12 66 44 6 22 18 36 34 42H0z" fill="#D77A5C"/><path d="M4 34c40 2 52 34 70 68 14 26 36 40 70 44" fill="none" stroke="#24231F" stroke-width="2"/>`,
 ];
-const REFS = [
-  { x: 548, y: 466, r: 8 },
-  { x: 556, y: 628, r: 12 },
-  { x: 540, y: 792, r: 9 },
-].map((p, i) => {
-  const d = document.createElement('div');
-  d.className = 'abs ref'; d.style.left = p.x + 'px'; d.style.top = p.y + 'px';
-  d.innerHTML = `<b>Estilo ${i + 1}</b><svg width="156" height="156" viewBox="0 0 156 156">${ART[i]}</svg>`;
-  $('refs').appendChild(d); return { el: d, ...p };
-});
+const REFS = [{ x: 548, y: 466, r: 8 }, { x: 556, y: 628, r: 12 }, { x: 540, y: 792, r: 9 }].map((p, i) => ({
+  ...p, el: make($('refs'), 'abs card ref', `<b>Estilo ${i + 1}</b><svg width="156" height="156" viewBox="0 0 156 156">${ART[i]}</svg>`, `left:${p.x}px;top:${p.y}px`),
+}));
 
-// legendas (janelas estimadas: ainda sem locução gravada)
+// 05 · SKILL.md digitado
+const CODE = ['# Edição de vídeo', '', '1. Seguir o guia visual', '2. Sincronizar com a locução', '3. Revisar antes de exportar'];
+const CODE_N = CODE.reduce((n, l) => n + l.length, 0);
+function typeLines(lines, n, caretOn, caretH) {
+  let left = n, out = [];
+  for (const l of lines) {
+    const k = Math.min(l.length, Math.max(0, left)); left -= l.length;
+    out.push({ s: l.slice(0, k), done: k === l.length, started: k > 0 || left >= 0 });
+  }
+  // o cursor fica na linha em digitação (ou na última, ao final)
+  let ci = out.findIndex((o, i) => !o.done && (o.s.length > 0 || i === 0 || out[i - 1].done));
+  if (ci < 0) ci = lines.length - 1;
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  return out.map((o, i) => esc(o.s) + (i === ci && caretOn ? `<span class="caret" style="height:${caretH}px"></span>` : '')).join('\n');
+}
+
+// 06 · miniaturas (placeholders autorais)
+const TH = [
+  `<rect width="154" height="98" fill="#F3EBE3"/><path d="M0 66c30-18 60-8 90-16 25-6 45-2 64-8v56H0z" fill="#E8C9B5"/><path d="M0 80c35-14 70 12 110 0 20-6 35-4 44-8v26H0z" fill="#D77A5C"/><circle cx="77" cy="44" r="17" fill="#fff"/><path d="M72 36v16l13-8z" fill="#24231F"/>`,
+  `<rect width="154" height="98" fill="#F3EBE3"/><circle cx="104" cy="30" r="16" fill="#D77A5C"/><path d="M0 72c30-32 60-28 80-10 20-12 45-10 74 4v32H0z" fill="#E6D3C4"/><path d="M0 90c40-14 80 8 154-6v14H0z" fill="#D77A5C"/>`,
+  `<rect width="154" height="98" fill="#F3EBE3"/><circle cx="136" cy="18" r="62" fill="#D77A5C"/><path d="M70 98c-4-20-2-42 12-60" fill="none" stroke="#24231F" stroke-width="3"/><g fill="#24231F"><ellipse cx="58" cy="70" rx="18" ry="6" transform="rotate(-35 58 70)"/><ellipse cx="88" cy="62" rx="20" ry="6" transform="rotate(-20 88 62)"/><ellipse cx="62" cy="48" rx="16" ry="5" transform="rotate(-60 62 48)"/><ellipse cx="94" cy="40" rx="18" ry="5.5" transform="rotate(-38 94 40)"/><ellipse cx="80" cy="28" rx="12" ry="4.5" transform="rotate(-70 80 28)"/></g>`,
+  `<rect width="154" height="98" fill="#F3EBE3"/><path d="M0 98V40a30 30 0 0 1 60 0v58z" fill="#E6D3C4"/><path d="M45 98V62h13v10h12v8h12v8h13v10z" fill="#D77A5C"/><path d="M100 98V36a14 14 0 0 1 28 0v62z" fill="#24231F"/>`,
+  `<rect width="154" height="98" fill="#F3EBE3"/><circle cx="88" cy="34" r="18" fill="#D77A5C"/><path d="M0 60c40-14 80 10 154-8v46H0z" fill="#E8D2C2"/><path d="M0 74c40-12 90 14 154-4v14c-54 14-104-10-154 4z" fill="#D77A5C"/><path d="M0 92c50-12 100 6 154-6v12H0z" fill="#E8C9B5"/>`,
+  `<rect width="154" height="98" fill="#F3EBE3"/><circle cx="128" cy="88" r="40" fill="#E8C3AE"/><g fill="none" stroke="#24231F" stroke-width="7" stroke-linecap="round"><path d="M4 92c20-20 50-34 86-38"/><path d="M6 76c22-24 48-38 80-44"/><path d="M8 58c20-22 44-36 70-42"/><path d="M12 40c16-18 34-28 52-32"/><path d="M4 92c26-8 56-8 84-2"/></g>`,
+];
+const THUMBS = TH.map((art, i) => make($('thumbs'), 'abs card thumb',
+  `<svg width="154" height="98" viewBox="0 0 154 98">${art}</svg><span>Vídeo ${i + 1}</span>`,
+  `left:${[216, 414, 611][i % 3]}px;top:${[521, 699][Math.floor(i / 3)]}px`));
+$('wave').innerHTML = [10, 24, 40, 18, 30, 12, 8, 22, 44, 28, 14, 36, 20, 10, 16, 8, 6]
+  .map((h, i) => `<rect x="${4 + i * 9.6}" y="${26 - h / 2}" width="3.4" height="${h}" rx="1.7" fill="#D77A5C"/>`).join('');
+
+// 07 · anexos
+const ICON = {
+  doc: '<path d="M5 2h7l4 4v12H5z M12 2v4h4 M8 10h5 M8 13h5" />',
+  link: '<path d="M8.5 11.5l3-3 M7 9.5l-2 2a2.8 2.8 0 0 0 4 4l2-2 M13 10.5l2-2a2.8 2.8 0 0 0-4-4l-2 2" />',
+  video: '<path d="M2.5 5.5h11v9h-11z M13.5 8.5l4-2.5v8l-4-2.5" />',
+  image: '<path d="M2.5 3.5h15v13h-15z M2.5 13.5l4-4 3 3 2-2 6 5 M13 7.5a1.2 1.2 0 1 0 0 .1" />',
+  music: '<path d="M7.5 15.5V4.5l9-2v11 M7.5 15.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0z M16.5 13.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />',
+};
+const CHIPS = [['doc', 'Guia visual'], ['link', 'Referências'], ['video', 'Vídeos'], ['image', 'Imagens'], ['music', 'Áudios']].map(([ic, txt]) =>
+  make($('chips'), 'chip', `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ICON[ic]}</svg>${txt}`));
+const TAGS = ['9:16', '40 s', 'PT-BR', 'Motion'].map(txt => make($('tags'), 'tag', txt));
+const ASK = ['Crie um vídeo vertical de 40 segundos,', 'seguindo meu guia visual, com narração', 'em português e animações suaves.'];
+const ASK_N = ASK.reduce((n, l) => n + l.length, 0);
+
+// 11 · checklist
+const SUM = ['Abrir o Claude', 'Definir o estilo', 'Skill opcional', 'Separar materiais', 'Enviar arquivos', 'Orientar o resultado', 'Revisar'].map((txt, i) =>
+  make($('sum'), 'row', `<div class="ok"><svg width="20" height="16" viewBox="0 0 18 16" style="overflow:visible">${CHECK('#fff').match(/<path[^>]*\/>/)[0]}</svg></div><span>${txt}</span>${i < 6 ? '<i></i>' : ''}`, `top:${21 + i * 66.7}px`));
+
+// legendas: janelas estimadas (ainda sem locução gravada)
 const CAPS = [
-  { a: 0.15, b: 1.85, w0: 0.20, w1: 1.60, txt: 'Quer editar vídeos com Claude?' },
-  { a: 2.05, b: 3.85, w0: 2.10, w1: 3.40, txt: 'Comece por estes sete passos.' },
-  { a: 4.05, b: 5.85, w0: 4.10, w1: 5.10, txt: 'Um: abra o Claude.' },
-  { a: 6.05, b: 7.35, w0: 6.10, w1: 7.00, txt: 'Dois: defina o estilo.' },
-  { a: 7.45, b: 9.80, w0: 7.50, w1: 8.80, txt: 'Guia visual e referências.' },
-].map(c => {
-  const d = document.createElement('div');
-  const words = c.txt.split(' ');
-  d.innerHTML = words.map(w => `<em>${w}</em>`).join(' ');
-  $('cap').appendChild(d);
-  return { ...c, el: d, words: [...d.querySelectorAll('em')] };
+  [0.15, 1.85, 0.20, 1.60, 'Quer editar vídeos com Claude?'],
+  [2.05, 3.85, 2.10, 3.40, 'Comece por estes sete passos.'],
+  [4.05, 5.85, 4.10, 5.10, 'Um: abra o Claude.'],
+  [6.05, 7.35, 6.10, 7.00, 'Dois: defina o estilo.'],
+  [7.45, 9.80, 7.50, 8.80, 'Guia visual e referências.'],
+  [10.05, 13.85, 10.10, 12.40, 'Três: se tiver uma skill, ative-a.'],
+  [14.05, 15.85, 14.10, 15.20, 'Quatro: separe os materiais.'],
+  [15.95, 18.35, 16.00, 17.20, 'Vídeos, imagens e áudios.'],
+  [18.55, 20.85, 18.60, 20.00, 'Cinco: envie arquivos e instruções.'],
+  [21.05, 23.45, 21.10, 22.40, 'Seis: explique o resultado.'],
+  [23.55, 26.35, 23.60, 25.00, 'Formato, duração, ritmo e animações.'],
+  [26.55, 28.45, 26.60, 27.60, 'Sete: aguarde a prévia.'],
+  [28.55, 30.35, 28.60, 29.90, 'O tempo varia conforme o projeto.'],
+  [30.55, 31.65, 30.60, 31.30, 'Precisa ajustar?'],
+  [31.75, 32.90, 31.80, 32.60, 'Diga exatamente o que mudar.'],
+  [33.05, 33.95, 33.10, 33.50, 'Pronto.'],
+  [34.05, 35.90, 34.10, 35.20, 'Salve este passo a passo.'],
+  [36.05, 37.90, 36.10, 37.00, 'Comece pelo roteiro.'],
+  [38.00, 99.00, 38.05, 39.00, 'Revise cada cena.'],
+].map(([a, b, w0, w1, txt]) => {
+  const el = make($('cap'), '', txt.split(' ').map(w => `<em>${w}</em>`).join(' '));
+  return { a, b, w0, w1, el, words: [...el.querySelectorAll('em')] };
 });
 
 // ---------- timeline ----------
 function seek(t) {
-  // 01 · Abertura (0–2 s): título por linhas, playhead cruza a timeline, dissolve
+  // 01 · Abertura (0–2 s)
   const s1out = 1.80;
   show($('s1e'), t, 0.00, 0.40, s1out, { dy: 16 });
   ['s1l0', 's1l1', 's1l2'].forEach((id, i) => show($(id), t, 0.04 + 0.06 * i, 0.45, s1out, { dy: 26 }));
   ['c0', 'c1', 'c2', 'c3'].forEach((id, i) => show($(id), t, 0.16 + 0.06 * i, 0.38, s1out, { dy: 0, s0: 0.96 }));
-  const ph = $('playhead');
-  ph.style.left = lerp(4, 764, INOUT(prog(t, 0.30, 1.60))) + 'px';
-  put(ph, { o: enter(t, 0.26, 0.2) * leave(t, s1out) });
+  $('playhead').style.left = lerp(4, 666, INOUT(prog(t, 0.30, 1.60))) + 'px';
+  put($('playhead'), { o: enter(t, 0.26, 0.2) * leave(t, s1out) });
 
   // 02 · Sete passos (2–4 s)
   const s2out = 3.80;
   show($('s2a'), t, 1.96, 0.39, s2out, { dy: 22 });
-  {
-    const p = prog(t, 2.55, 3.10), o = OUT(clamp(p * 1.8)) * leave(t, s2out);
-    put($('s2n'), { o, s: lerp(0.86, 1, back(p)), y: (1 - OUT(p)) * 18 });
-  }
+  { const p = prog(t, 2.55, 3.10); put($('s2n'), { o: OUT(clamp(p * 1.8)) * leave(t, s2out), s: lerp(0.86, 1, back(p)), y: (1 - OUT(p)) * 18 }); }
   show($('s2p'), t, 2.92, 0.38, s2out, { dy: 18 });
 
-  // Cabeçalho: progresso entra no passo 1 e persiste; título troca mantendo a âncora
-  put($('prog'), { o: enter(t, 3.96, 0.34) });
-  SEGS.forEach((seg, i) => {
-    const a = [4.04, 6.02][i];
-    seg.style.transform = `scaleX(${a === undefined ? 0 : OUT(prog(t, a, a + 0.32)).toFixed(4)})`;
+  // Cabeçalho: progresso some na revisão e volta cinza no resumo
+  put($('prog'), { o: enter(t, 3.96, 0.34) * leave(t, 30.28) + enter(t, 33.00, 0.25) * leave(t, 33.80) });
+  SEGS.forEach((seg, i) => { seg.style.transform = `scaleX(${(t < 30.5 ? OUT(prog(t, FILL[i], FILL[i] + 0.32)) : 0).toFixed(4)})`; });
+  HDR.forEach(h => {
+    show(h.le, t, h.la, h.ld || 0.35, h.out, { dy: 16, outD: h.outD || 0.2 });
+    show(h.te, t, h.ta, 0.40, h.out, { dy: 20, outD: h.outD || 0.2 });
   });
-  show($('h1l'), t, 3.96, 0.39, 5.80, { dy: 16, outD: 0.18 });
-  show($('h1t'), t, 4.05, 0.40, 5.80, { dy: 20, outD: 0.18 });
-  show($('h2l'), t, 6.00, 0.35, 9.78, { dy: 16 });
-  show($('h2t'), t, 6.05, 0.40, 9.78, { dy: 20 });
 
-  // 03 · Passo 1 (4–6 s): card do chat entra; pontos e saudação surgem
-  show($('chat'), t, 4.25, 0.50, 5.78, { dy: 24, s0: 0.96 });
+  // 03 · Passo 1 (4–6 s)
+  show($('chat1'), t, 4.25, 0.50, 5.78, { dy: 24, s0: 0.96 });
   ['d0', 'd1', 'd2'].forEach((id, i) => show($(id), t, 4.85 + 0.08 * i, 0.30, null, { dy: 0, s0: 0.6 }));
-  show($('hello'), t, 4.95, 0.45, null, { dy: 16 });
-  show($('input'), t, 5.10, 0.40, null, { dy: 12 });
-  show($('note'), t, 5.20, 0.35, 5.78, { dy: 10 });
+  show($('hello1'), t, 4.95, 0.45, null, { dy: 16 });
+  show($('input1'), t, 5.10, 0.40, null, { dy: 12 });
+  show($('note1'), t, 5.20, 0.35, 5.78, { dy: 10 });
 
-  // 04 · Passo 2 (6–10 s): guia, itens em cascata, referências da direita
+  // 04 · Passo 2 (6–10 s)
   show($('guide'), t, 6.25, 0.55, 9.75, { dy: 24, s0: 0.96 });
   ITEMS.forEach((it, i) => {
     const a = 6.80 + 0.12 * i;
     show(it, t, a, 0.38, 9.75, { dy: 14 });
-    it.querySelector('path').style.strokeDashoffset = (1 - OUT(prog(t, a + 0.12, a + 0.42))).toFixed(4);
+    draw(it.querySelector('path'), OUT(prog(t, a + 0.12, a + 0.42)));
   });
-  REFS.forEach((rf, i) => {
-    const a = 8.00 + 0.15 * i;
-    show(rf.el, t, a, 0.55, 9.75, { dy: 0, dx: 120, r0: rf.r + 8, r: rf.r, s0: 0.96 });
+  REFS.forEach((rf, i) => show(rf.el, t, 8.00 + 0.15 * i, 0.55, 9.75, { dy: 0, dx: 120, r0: rf.r + 8, r: rf.r, s0: 0.96 }));
+
+  // 05 · Passo 3 (10–14 s): painel entra, texto digitado linha a linha
+  show($('editor'), t, 10.25, 0.40, 13.75, { dy: 24, s0: 0.96 });
+  show($('pill'), t, 10.55, 0.35, null, { dy: 0, s0: 0.85 });
+  {
+    const n = Math.floor(prog(t, 10.75, 12.85) * CODE_N + 1e-6);
+    const blink = t < 12.85 || Math.floor((t - 12.85) * 2.2) % 2 === 0;
+    $('code').innerHTML = typeLines(CODE, n, t >= 10.70 && blink, 26);
+  }
+
+  // 06 · Passo 4 (14–18,5 s): grade por célula, depois imagens e áudios
+  THUMBS.forEach((th, i) => show(th, t, 14.25 + 0.10 * i, 0.45, 18.25, { dy: 20, s0: 0.96 }));
+  show($('mImg'), t, 16.20, 0.45, 18.25, { dy: 20, s0: 0.96 });
+  show($('mAud'), t, 16.65, 0.45, 18.25, { dy: 20, s0: 0.96 });
+  $('wave').style.clipPath = `inset(0 ${(100 * (1 - INOUT(prog(t, 16.80, 17.25)))).toFixed(2)}% 0 0)`;
+
+  // 07 · Passo 5 (18,5–21 s) e 08 · Passo 6 (21–26,5 s): o mesmo chat
+  show($('chat2'), t, 18.50, 0.40, 26.25, { dy: 24, s0: 0.96 });
+  show($('hello2'), t, 18.60, 0.40, 20.85, { dy: 12 });
+  CHIPS.forEach((c, i) => show(c, t, 18.95 + 0.18 * i, 0.35, 20.85, { dy: 8, s0: 0.9 }));
+  {
+    // campo: anexos (127) → pedido (209) → mensagem vazia (76)
+    const grow = OUT(prog(t, 21.05, 21.40)), shrink = INOUT(prog(t, 25.10, 25.45));
+    const top = lerp(lerp(323, 246, grow), 379, shrink), h = lerp(lerp(127, 209, grow), 76, shrink);
+    const f = $('field2'); f.style.left = '19px'; f.style.width = '610px'; f.style.top = top + 'px'; f.style.height = h + 'px';
+    put(f, { o: enter(t, 18.70, 0.35) });
+    // pedido digitado
+    const n = Math.floor(prog(t, 21.25, 24.40) * ASK_N + 1e-6);
+    const blink = t < 24.40 || Math.floor((t - 24.40) * 2.2) % 2 === 0;
+    $('typed').innerHTML = typeLines(ASK, n, t >= 21.20 && blink, 30);
+    const go = INOUT(prog(t, 25.10, 25.35));
+    put($('typed'), { o: (t >= 21.15 ? 1 : 0) * (1 - go), x: go * 60, y: -go * 90, s: 1 - 0.1 * go });
+    TAGS.forEach((g, i) => show(g, t, 24.40 + 0.08 * i, 0.32, 25.02, { dy: 8, s0: 0.92, outD: 0.16 }));
+    show($('ph2'), t, 25.40, 0.30, null, { dy: 0 });
+    // envio: botão reage, mensagem vira balão, retorno entra
+    const b = $('send2'), on = enter(t, 19.00, 0.25) * (1 - INOUT(prog(t, 25.20, 25.45)));
+    b.style.background = `color-mix(in oklab, #D77A5C ${(on * 100).toFixed(1)}%, #E7E3DA)`;
+    put(b, { s: 1 - 0.12 * Math.sin(Math.PI * prog(t, 25.00, 25.20)), o: enter(t, 18.75, 0.3) });
+    const bb = $('bubble2'); bb.style.transformOrigin = '100% 100%';
+    show(bb, t, 25.15, 0.40, null, { dy: 50, s0: 0.92 });
+    show($('reply2'), t, 25.60, 0.40, null, { dy: 14 });
+    show($('replyTxt'), t, 25.75, 0.40, null, { dy: 8 });
+    document.querySelectorAll('#reply2 .rd').forEach((d, i) => {
+      d.style.opacity = (0.35 + 0.65 * (0.5 + 0.5 * Math.cos(2 * Math.PI * ((t - 25.6) / 0.9 - i * 0.12 / 0.9)))).toFixed(3);
+    });
+  }
+
+  // 09 · Passo 7 (26,5–30,5 s): processamento ilustrativo, sem relação com tempo real
+  show($('ring'), t, 26.75, 0.40, 30.25, { dy: 0, s0: 0.96 });
+  $('arc').style.strokeDashoffset = (1 - lerp(0.02, 1, INOUT(prog(t, 27.15, 29.50))) * enter(t, 26.85, 0.3)).toFixed(4);
+  draw($('done'), OUT(prog(t, 29.62, 29.98)));
+  show($('procTxt'), t, 26.95, 0.40, 29.50, { dy: 10, outD: 0.15 });
+  show($('procDots'), t, 27.05, 0.40, 29.50, { dy: 10, outD: 0.15 });
+  document.querySelectorAll('#procDots .pd').forEach((d, i) => {
+    d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin(2 * Math.PI * ((t - 27.1) / 0.8 - i * 0.12 / 0.8)))).toFixed(2)}px)`;
   });
+  show($('tvar'), t, 27.10, 0.35, 30.25, { dy: 10 });
+
+  // 10 · Revisão (30,5–33 s)
+  show($('chat3'), t, 30.65, 0.45, 32.80, { dy: 24, s0: 0.96 });
+  show($('bubble3'), t, 31.10, 0.40, null, { dy: 16 });
+  show($('fix'), t, 31.85, 0.40, null, { dy: 14 });
+  draw($('fixCk'), OUT(prog(t, 32.00, 32.30)));
+  $('fixBar').style.transform = `scaleX(${INOUT(prog(t, 32.25, 32.70)).toFixed(4)})`;
+
+  // 11 · Resumo (33–34 s): checks em cascata
+  show($('sum'), t, 33.00, 0.25, 33.80, { dy: 20, s0: 0.96 });
+  SUM.forEach((r, i) => {
+    const a = 33.25 + 0.06 * i, p = prog(t, a, a + 0.25);
+    put(r.querySelector('.ok'), { o: OUT(clamp(p * 2)), s: lerp(0.6, 1, back(p)) });
+    draw(r.querySelector('path'), OUT(prog(t, a + 0.06, a + 0.3)));
+  });
+
+  // 12 · Salvar (34–36 s): título por máscara, marcador desce e assenta
+  { const p = OUT(prog(t, 34.00, 34.35)); put($('saveT'), { y: (1 - p) * 250, o: leave(t, 35.80) }); }
+  { const p = prog(t, 34.20, 34.65); put($('mark'), { o: OUT(clamp(p * 1.6)) * leave(t, 35.80), s: lerp(0.90, 1, back(p, 1.2)), y: (OUT(p) - 1) * 16 }); }
+  show($('saveSub'), t, 34.80, 0.40, 35.80, { dy: 16 });
+
+  // 13 · Fechamento (36–40 s): título, chips, tela final mantida
+  show($('endA'), t, 36.00, 0.45, null, { dy: 26 });
+  show($('endB'), t, 36.06, 0.45, null, { dy: 26 });
+  ['p0', 'p1', 'p2'].forEach((id, i) => show($(id), t, 36.55 + 0.18 * i, 0.45, null, { dy: 18, s0: 0.94 }));
 
   // legendas: entrada curta, palavra ativa em terracota
   CAPS.forEach(c => {
-    const o = enter(t, c.a, 0.18) * leave(t, c.b - 0.15, 0.15);
-    put(c.el, { o, y: (1 - enter(t, c.a, 0.18)) * 8 });
-    const n = c.words.length, k = Math.floor(prog(t, c.w0, c.w1) * n - 1e-9);
+    const e = enter(t, c.a, 0.18);
+    put(c.el, { o: e * leave(t, c.b - 0.15, 0.15), y: (1 - e) * 8 });
+    const k = Math.floor(prog(t, c.w0, c.w1) * c.words.length - 1e-9);
     c.words.forEach((w, i) => { w.style.color = (i === k && t < c.w1 + 0.25) ? 'var(--accent)' : 'var(--ink)'; });
   });
 }
@@ -300,7 +569,7 @@ window.ready = document.fonts.ready.then(() => Promise.all([...document.images].
 
 const q = new URLSearchParams(location.search);
 if (q.has('t')) window.ready.then(() => seek(+q.get('t')));
-if (q.has('play')) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % 10); requestAnimationFrame(f); }; f(); });
+if (q.has('play')) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % 40); requestAnimationFrame(f); }; f(); });
 </script>
 </body>
 </html>
