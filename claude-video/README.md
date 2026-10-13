@@ -1,10 +1,10 @@
 # Como editar vídeos com Claude · versão clara (9:16)
 
 Motion explicativo PT-BR, recriado a partir de `Motion_PTBR_Roteiro_Prompts_v01.md` e do
-storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 54,2 s no total
-(roteiro de 40 s + pausas de leitura + assinatura JACK).
+storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 46,5 s no total
+(roteiro de 40 s com o ritmo ajustado à narração + assinatura JACK).
 
-**Status:** v06 final: 13 cenas + assinatura, 54,2 s, com narração, legendas sincronizadas e efeitos.
+**Status:** v07 final: 13 cenas + assinatura, 46,5 s, com narração, legendas sincronizadas e efeitos.
 
 - v01: prévia de 0–8 s; animações aprovadas.
 - v02: composição escalada para ocupar o quadro vertical; logo em laranja e preto; cenas 05–13.
@@ -12,10 +12,11 @@ storyboard `Storyboard_Claude_Claro_v01_APROVACAO.pdf`. 1080×1920, 30 fps, 54,2
 - v04: efeitos sonoros enviados para o projeto, sincronizados no pico de cada ação.
 - v05: assinatura final com o lettering JACK animado como o intro de jackdsgn.github.io.
 - v06: narração (ElevenLabs) posicionada por cena, legendas palavra a palavra e mix final em −16 LUFS.
+- v07: pausas recalculadas pela narração (54,2 → 46,5 s): ~0,4–0,7 s entre uma fala e a próxima.
 
 | Arquivo | O que é |
 |---|---|
-| `out/claude-video-v06-54s-final.mp4` | Vídeo final, 54,2 s, H.264 + AAC (voz + efeitos) |
+| `out/claude-video-v07-46s-final.mp4` | Vídeo final, 46,5 s, H.264 + AAC (voz + efeitos) |
 | `out/comparacao-storyboard-v02.png` | Storyboard (em cima) × render (embaixo), um quadro por cena |
 | `film.html` | Motor: `window.seek(t)` determinístico, todas as cenas em texto e vetor |
 
@@ -41,57 +42,30 @@ jackdsgn.github.io), recalculada por quadro em vez de usar o GSAP:
 2. K desliza para o lugar (0,8 s, `expo.inOut`);
 3. J, A e C sobem pela máscara (0,7 s cada, `expo.out`, intervalo de 0,13 s) e o JACK fica parado até o fim.
 
-Mesmo SVG e mesma máscara do site, em Deep Blue `#202030` sobre o fundo claro, com 620 px de largura e
+O JACK completo fica parado por ≈1,3 s. Mesmo SVG e mesma máscara do site, em Deep Blue `#202030` sobre o fundo claro, com 620 px de largura e
 centro em y ≈ 860. Sons: whoosh no giro e no deslize, pops nas letras e clique no JACK completo.
 
 ## Ritmo
 
-A timeline de `seek()` segue os tempos do roteiro (40 s). Antes dela, `PACE` remapeia o tempo:
-cada `hold` congela um estado estável depois que a ação termina (o cursor continua piscando) e o
-`stretch` alonga o resumo. Para mudar o ritmo, edite só `PACE`; `DURATION` é recalculada.
+A timeline de `seek()` segue os tempos do roteiro (40 s). Antes dela, `PACE` ajusta o ritmo à
+narração: `hold` congela um estado estável e `{a, b, len}` alonga ou encurta um trecho. A regra é
+deixar ~0,4–0,7 s entre o fim da fala de uma cena e o começo da próxima, com duas exceções: o envio
+do pedido (cena 08) só acontece depois de a fala terminar, e a cena 06 fica com ~1 s porque a fala é
+curta para os materiais. Para mudar o ritmo, edite só `PACE`; `DURATION`, voz, legendas e efeitos
+acompanham.
 
-| Onde | Pausa |
+| Onde | Ajuste |
 |---|---|
-| 03 · chat pronto | +0,6 s |
-| 04 · guia e referências | +0,8 s |
-| 05 · SKILL.md digitado | +1,5 s |
-| 06 · materiais | +0,8 s |
-| 07 · anexos | +0,8 s |
-| 08 · pedido digitado, antes do envio | +1,5 s |
-| 08 · "Preparando a prévia…" | +1,0 s |
-| 09 · check | +0,6 s |
-| 10 · ajuste concluído | +1,2 s |
-| 11 · resumo | 1 s → 2 s |
-
-## Narração e legendas
-
-`audio/narracao.mp3` (34,35 s) é cortada nas pausas pelo `silencedetect`: são 23 trechos de fala que
-batem com o roteiro em ordem e em duração (5–7 sílabas/s). A frase final do roteiro ("Na hora de
-criar, comece pelo roteiro e termine revisando cada cena.") não está no arquivo, então a cena 13 e a
-assinatura ficam sem fala.
-
-`audio/narracao.py` põe a fala de cada cena no início dela, mantendo as pausas internas, e gera
-`audio/legendas.js`: o texto que a voz diz, em grupos de 2–6 palavras, com a palavra dita em terracota.
-As bordas de cada trecho são medidas; dentro do trecho, o tempo de cada palavra é proporcional às
-sílabas (não havia transcrição automática neste ambiente).
-
-`audio/mix.py` soma voz e efeitos: efeitos 7 dB abaixo da voz, com ducking de 6 dB enquanto ela fala,
-−16 LUFS integrado (−16,5 no MP4) e true peak de −1,5 dBTP depois do AAC.
-
-## Efeitos sonoros
-
-`audio/sfx/` guarda os três arquivos enviados. Como não foi possível ouvi-los, a função de cada um
-foi definida pela análise de envelope e espectro:
-
-| Arquivo | Perfil | Uso |
-|---|---|---|
-| `pop-grave_495.mp3` | impacto curto e grave (96% < 200 Hz) | entrada de cards e painéis |
-| `clique_503.mp3` | ataque seco e brilhante, pico em 0,84 s | envio, checks, o "7", o marcador |
-| `whooshes_864.mp3` | 5 whooshes (picos em 0,10/1,05/2,67/4,78/6,43 s) | troca de cena, alternando os 5 |
-
-`audio/sfx_mix.py` lê a lista `PACE` do `film.html` e põe o pico de cada som no momento visual da
-ação (69 deixas, desvio medido ≤ 10 ms). Nas cascatas o tom sobe a cada item e o volume baixa.
-O nível final dos efeitos é definido em `audio/mix.py`.
+| 02 · o 7 assenta | +0,3 s |
+| 04 · guia e referências | +0,8 s (a fala é mais longa que a cena) |
+| 05 · SKILL.md digitado | +0,3 s |
+| 06 · depois dos materiais | 0,9 s → 0,15 s |
+| 07 · anexos | +0,8 s (a fala é mais longa que a cena) |
+| 08 · antes do envio | +1,6 s, para a fala terminar antes do clique |
+| 09 · check | +0,3 s |
+| 10 · ajuste concluído | +0,6 s |
+| 11 · resumo | 0,8 s → 1,2 s |
+| 13 · tela final parada | 2,5 s → 1,0 s |
 
 ## Pipeline
 
@@ -102,7 +76,7 @@ node tools/render.mjs                           # [início] [fim=DURATION] [fps=
 python3 audio/narracao.py                       # → audio/voz.wav, audio/legendas.js
 python3 audio/sfx_mix.py                        # → audio/sfx.wav
 python3 audio/mix.py                            # → audio/mix.wav (−16 LUFS)
-tools/encode.sh claude-video-v06-54s-final audio/mix.wav   # → out/*.mp4
+tools/encode.sh claude-video-v07-46s-final audio/mix.wav   # → out/*.mp4
 ```
 
 Para ver um quadro: `film.html?t=4.6`. Para tocar em tempo real: `film.html?play`.

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <title>Vídeos com Claude · Versão clara</title>
 <!--
-  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps · 54,2 s
-  (roteiro de 40 s + pausas de leitura, ver PACE, + assinatura JACK de 4,2 s).
+  Motion explicativo "Como editar vídeos com Claude" · versão clara · 1080×1920 (9:16) · 30 fps
+  (roteiro de 40 s com o ritmo ajustado à narração, ver PACE, + assinatura JACK de 3,6 s).
 
   Roteiro: Motion_PTBR_Roteiro_Prompts_v01.md · Storyboard: Storyboard_Claude_Claro_v01_APROVACAO.pdf.
 
@@ -422,21 +422,22 @@ const CAPS = (window.LEGENDAS || []).map(c => {
 });
 
 // ---------- ritmo: pausas de leitura ----------
-// A timeline abaixo usa o tempo do roteiro (40 s). PACE insere pausas onde cada ação termina
-// (hold: o quadro fica estável) e alonga o resumo (stretch). O vídeo final dura DURATION.
+// A timeline abaixo usa o tempo do roteiro (40 s). PACE ajusta o ritmo à narração: hold congela um
+// estado estável; {a, b, len} alonga (len > b − a) ou encurta (len < b − a) um trecho. Os valores
+// deixam ~0,4–0,7 s entre o fim da fala de uma cena e o começo da próxima. O vídeo dura DURATION.
 const PACE = [
-  { at: 5.56, hold: 0.6 },    // 03 · chat pronto
-  { at: 9.00, hold: 0.8 },    // 04 · guia e referências
-  { at: 13.00, hold: 1.5 },   // 05 · SKILL.md digitado
-  { at: 17.30, hold: 0.8 },   // 06 · materiais
-  { at: 20.30, hold: 0.8 },   // 07 · anexos
-  { at: 24.97, hold: 1.5 },   // 08 · pedido digitado, antes do envio
-  { at: 26.20, hold: 1.0 },   // 08 · "Preparando a prévia…"
-  { at: 30.00, hold: 0.6 },   // 09 · check
-  { at: 32.72, hold: 1.2 },   // 10 · ajuste concluído
-  { a: 33.00, b: 33.80, len: 2.0 },   // 11 · resumo de 1 s para 2 s
+  { at: 3.30, hold: 0.3 },             // 02 · o 7 assenta enquanto a fala termina
+  { at: 9.00, hold: 0.8 },             // 04 · guia e referências (a fala é mais longa que a cena)
+  { at: 13.00, hold: 0.3 },            // 05 · SKILL.md digitado
+  { a: 17.30, b: 18.20, len: 0.15 },   // 06 · encurta o trecho parado depois dos materiais
+  { at: 20.30, hold: 0.8 },            // 07 · anexos (a fala é mais longa que a cena)
+  { at: 24.97, hold: 1.6 },            // 08 · pedido digitado; o envio só depois de a fala terminar
+  { at: 30.00, hold: 0.3 },            // 09 · check
+  { at: 32.72, hold: 0.6 },            // 10 · ajuste concluído
+  { a: 33.00, b: 33.80, len: 1.2 },    // 11 · resumo
+  { a: 37.45, b: 39.95, len: 1.0 },    // 13 · encurta a tela final parada
 ];
-const END = 44.2;   // roteiro (40 s) + assinatura final
+const END = 43.6;   // roteiro (40 s) + assinatura final
 const KNOTS = [[0, 0]];   // [novo, roteiro]
 for (const e of PACE) {
   const [n, o] = KNOTS[KNOTS.length - 1];
