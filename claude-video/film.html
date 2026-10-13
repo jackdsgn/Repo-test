@@ -281,6 +281,7 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
   <svg class="abs" id="jack" viewBox="-2 -4 104 49" fill="currentColor"><defs><clipPath id="jkMask"><rect x="-60" y="-1" width="220" height="42.5"/></clipPath></defs><g clip-path="url(#jkMask)"><path id="jkJ" d="M8.27043 40.2349C6.5521 40.2349 4.97654 39.8779 3.53355 39.1691C2.09055 38.4552 0.912705 37.4506 0 36.1553L4.51763 31.4434C4.99183 32.0655 5.50173 32.5398 6.05241 32.8662C6.60309 33.1925 7.18436 33.3608 7.80643 33.3608C8.71914 33.3608 9.42279 33.1211 9.91738 32.6367C10.412 32.1522 10.6567 31.4383 10.6567 30.4847V0H17.4485V31.3057C17.4485 34.1359 16.6429 36.3338 15.0367 37.8942C13.4305 39.4547 11.1768 40.2349 8.27043 40.2349Z"/><path id="jkA" d="M31.7152 0H26.9478L17.4485 39.8219H24.1842L25.1733 34.7989L26.8152 26.4918L29.3341 13.7176L31.8529 26.4918L33.505 34.8805L34.484 39.8219H41.2196L31.7152 0Z"/><path id="jkC" d="M38.9097 20.3926C38.9097 7.41443 48.7812 0.00488281 60.4883 0.00488281C66.7803 0.00488281 71.3948 2.55462 74.5817 5.66021L71.3184 9.88258C68.1315 7.17475 64.7918 5.50212 60.7279 5.50212C51.8099 5.50212 45.681 11.4736 45.681 20.3926C45.681 29.3116 51.7334 35.125 60.5699 35.125C65.3475 35.125 69.3298 32.973 72.5115 30.2652L75.4587 34.5641C71.1603 38.3887 65.8268 40.6172 60.0906 40.6172C47.9857 40.6172 38.9097 33.2127 38.9097 20.3926Z"/></g><path id="jkK" d="M77.7532 40.026V0.204102H84.5449V40.0311H77.7532V40.026ZM83.1478 33.7026V21.6219L90.8982 0.204102H98.5669L83.1478 33.7026ZM92.3769 40.026L87.4921 24.2584L85.6412 18.2767L90.2965 14.1971L99.8264 40.026H92.3769Z M87.4922 24.2632L84.5451 40.0257L83.1479 28.6691L87.4922 24.2632Z"/></svg>
 </div>
 
+<script src="audio/legendas.js"></script>
 <script>
 // ---------- tempo e easing ----------
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -414,30 +415,10 @@ const ASK_N = ASK.reduce((n, l) => n + l.length, 0);
 const SUM = ['Abrir o Claude', 'Definir o estilo', 'Skill opcional', 'Separar materiais', 'Enviar arquivos', 'Orientar o resultado', 'Revisar'].map((txt, i) =>
   make($('sum'), 'row', `<div class="ok"><svg width="20" height="16" viewBox="0 0 18 16" style="overflow:visible">${CHECK('#fff').match(/<path[^>]*\/>/)[0]}</svg></div><span>${txt}</span>${i < 6 ? '<i></i>' : ''}`, `top:${21 + i * 66.7}px`));
 
-// legendas: janelas estimadas (ainda sem locução gravada)
-const CAPS = [
-  [0.15, 1.85, 0.20, 1.60, 'Quer editar vídeos com Claude?'],
-  [2.05, 3.85, 2.10, 3.40, 'Comece por estes sete passos.'],
-  [4.05, 5.85, 4.10, 5.10, 'Um: abra o Claude.'],
-  [6.05, 7.35, 6.10, 7.00, 'Dois: defina o estilo.'],
-  [7.45, 9.80, 7.50, 8.80, 'Guia visual e referências.'],
-  [10.05, 13.85, 10.10, 12.40, 'Três: se tiver uma skill, ative-a.'],
-  [14.05, 15.85, 14.10, 15.20, 'Quatro: separe os materiais.'],
-  [15.95, 18.35, 16.00, 17.20, 'Vídeos, imagens e áudios.'],
-  [18.55, 20.85, 18.60, 20.00, 'Cinco: envie arquivos e instruções.'],
-  [21.05, 23.45, 21.10, 22.40, 'Seis: explique o resultado.'],
-  [23.55, 26.35, 23.60, 24.60, 'Formato, duração, ritmo e animações.'],
-  [26.55, 28.45, 26.60, 27.60, 'Sete: aguarde a prévia.'],
-  [28.55, 30.35, 28.60, 29.90, 'O tempo varia conforme o projeto.'],
-  [30.55, 31.65, 30.60, 31.30, 'Precisa ajustar?'],
-  [31.75, 32.90, 31.80, 32.60, 'Diga exatamente o que mudar.'],
-  [33.05, 33.95, 33.10, 33.50, 'Pronto.'],
-  [34.05, 35.90, 34.10, 35.20, 'Salve este passo a passo.'],
-  [36.05, 37.90, 36.10, 37.00, 'Comece pelo roteiro.'],
-  [38.00, 40.15, 38.05, 39.00, 'Revise cada cena.'],
-].map(([a, b, w0, w1, txt]) => {
-  const el = make($('cap'), '', txt.split(' ').map(w => `<em>${w}</em>`).join(' '));
-  return { a, b, w0, w1, el, words: [...el.querySelectorAll('em')] };
+// legendas: geradas por audio/narracao.py a partir da narração gravada (tempo do vídeo, palavra a palavra)
+const CAPS = (window.LEGENDAS || []).map(c => {
+  const el = make($('cap'), '', c.words.map(w => `<em>${w.w}</em>`).join(' '));
+  return { ...c, el, ems: [...el.querySelectorAll('em')] };
 });
 
 // ---------- ritmo: pausas de leitura ----------
@@ -608,12 +589,13 @@ function seek(T) {
     put($('jack'), { o: e > 0 ? 1 : 0 });
   }
 
-  // legendas: entrada curta, palavra ativa em terracota
+  // legendas: entrada curta; a palavra que está sendo dita fica em terracota
   CAPS.forEach(c => {
-    const e = enter(t, c.a, 0.18);
-    put(c.el, { o: e * leave(t, c.b - 0.15, 0.15), y: (1 - e) * 8 });
-    const k = Math.floor(prog(t, c.w0, c.w1) * c.words.length - 1e-9);
-    c.words.forEach((w, i) => { w.style.color = (i === k && t < c.w1 + 0.25) ? 'var(--accent)' : 'var(--ink)'; });
+    const e = enter(T, c.a, 0.15);
+    put(c.el, { o: e * leave(T, c.b - 0.12, 0.12), y: (1 - e) * 8 });
+    let k = -1; c.words.forEach((d, i) => { if (T >= d.s) k = i; });
+    if (k >= 0 && T > c.words[k].e + 0.08) k = -1;   // na pausa, nenhuma palavra acesa
+    c.ems.forEach((w, i) => { w.style.color = i === k ? 'var(--accent)' : 'var(--ink)'; });
   });
 }
 

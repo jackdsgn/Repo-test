@@ -12,48 +12,11 @@ baixa, para não repetir o mesmo som.
 
   python3 audio/sfx_mix.py
 """
-import re
 import subprocess
-from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent.parent
-SR = 48000
-
-
-def decode(path):
-    raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(path), '-f', 'f32le', '-ac', '2', '-ar', str(SR), '-'],
-                         check=True, capture_output=True).stdout
-    return np.frombuffer(raw, dtype=np.float32).reshape(-1, 2).astype(np.float64)
-
-
-# ---------- tempo: mesma regra de film.html (PACE → KNOTS) ----------
-html = (ROOT / 'film.html').read_text(encoding='utf-8')
-pace_src = re.search(r'const PACE = \[(.*?)\];', html, re.S).group(1)
-knots = [(0.0, 0.0)]   # (novo, roteiro)
-for m in re.finditer(r'\{ *(at: *([\d.]+), *hold: *([\d.]+)|a: *([\d.]+), *b: *([\d.]+), *len: *([\d.]+)) *\}', pace_src):
-    n, o = knots[-1]
-    if m.group(2):
-        at, hold = float(m.group(2)), float(m.group(3))
-        n0 = n + at - o
-        knots += [(n0, at), (n0 + hold, at)]
-    else:
-        a, b, ln = float(m.group(4)), float(m.group(5)), float(m.group(6))
-        n0 = n + a - o
-        knots += [(n0, a), (n0 + ln, b)]
-END = float(re.search(r'const END = ([\d.]+)', html).group(1))
-n, o = knots[-1]
-knots.append((n + END - o, END))
-DURATION = knots[-1][0]
-
-
-def at(o):
-    """Tempo do roteiro → tempo do vídeo (antes de uma pausa, nunca dentro dela)."""
-    for (n0, o0), (n1, o1) in zip(knots, knots[1:]):
-        if o1 > o0 and o0 <= o <= o1:
-            return n0 + (o - o0) * (n1 - n0) / (o1 - o0)
-    raise ValueError(o)
+from timeline import DURATION, ROOT, SR, at, decode
 
 
 # ---------- amostras: recorte e pico ----------
@@ -69,7 +32,6 @@ SLICES = {   # nome: (fonte, início, fim, pico) em segundos
     'wh4': ('wh', 6.14, 6.84, 6.425),
 }
 LEVEL = {'pop': -17.0, 'clk': -15.0, 'wh': -19.0}   # pico RMS (janela de 5 ms) de cada som, em dBFS
-MASTER_DB = 7.0   # sem locução, os efeitos sobem; quando a voz entrar, voltar a 0 para ficarem por baixo dela
 
 
 def sample(name):
@@ -149,7 +111,6 @@ for o, name, gain, semis in CUES:
     start = int((at(o) - pk / r) * SR)
     bus[max(0, start):start + len(y)] += y[max(0, -start):][:len(bus) - max(0, start)]
 bus = bus[:int(DURATION * SR)]
-bus *= 10 ** (MASTER_DB / 20)
 
 tmp = ROOT / 'audio/sfx_raw.wav'
 out = ROOT / 'audio/sfx.wav'
