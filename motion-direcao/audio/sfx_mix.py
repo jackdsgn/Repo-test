@@ -74,13 +74,23 @@ CUES = [   # (tempo, som, ganho dB, semitons)
     (0.70, 'clk', -7, 2),
     (1.62, 'pop', -2, 0),
     (4.85, 'wh1', -4, 0),           # o quadrado expande em card
-    # 02 · um tick sutil por exemplo
-    (5.70, 'clk', -10, 5),          # fade in
-    (7.80, 'clk', -10, 5),          # slide in
-    (10.10, 'clk', -10, 6),         # stagger
-    (13.70, 'wh3', -8, 2),          # contêineres se reorganizam
+    # 02 · um tick sutil por exemplo, quando a voz o nomeia
+    (6.30, 'clk', -10, 5),          # fade in
+    (9.00, 'clk', -10, 5),          # slide in
+    (10.90, 'clk', -10, 6),         # stagger
+    (13.45, 'wh3', -8, 2),          # contêineres viram pistas
+    # 03 · whoosh leve no primeiro percurso; a repetição fica sem efeito
+    (16.90, 'wh2', -7, 0),
+    # 04 · som curto no fim da contagem
+    (27.95, 'clk', -6, 3),
+    # 05 · whoosh curto no wipe final, sem som no morph
+    (37.00, 'wh4', -3, 0),
+    # 06 · clique único ao iniciar a prévia
+    (42.97, 'clk', -5, 1),
+    # 07 · o marcador entra
+    (49.35, 'pop', -5, 0),
 ]
-MASTER_DB = 9.0   # sem locução, os efeitos ficam um pouco mais presentes
+MASTER_DB = 0.0   # o nível final dos efeitos sob a voz é definido em audio/mix.py
 
 # ---------- mixagem ----------
 bus = np.zeros((int(DURATION * SR) + SR, 2))

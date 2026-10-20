@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <title>Motion com direção</title>
 <!--
-  Motion explicativo "Motion com direção · Do termo ao prompt" · 1080×1920 (9:16) · 30 fps · 60 s.
+  Motion explicativo "Motion com direção · Do termo ao prompt" · 1080×1920 (9:16) · 30 fps · 55 s
+  (o storyboard prevê 60 s; a narração gravada tem 54 s e as cenas acompanham a fala).
   Storyboard: Storyboard_Motion_com_Direcao_v01_APROVACAO.pdf (7 cenas, tempos locais nas fichas).
 
   As cenas são desenhadas nas coordenadas dos frames do storyboard (941×1672) dentro de #content,
@@ -41,6 +42,18 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 .sq{background:var(--coral);border-radius:12px;box-shadow:0 10px 22px rgba(216,132,103,.28)}
 .mini{background:var(--coral);border-radius:12px;box-shadow:0 8px 18px rgba(216,132,103,.25)}
 .mini i{position:absolute;left:24px;height:9px;border-radius:5px;background:rgba(255,255,255,.75)}
+.track{position:absolute;height:3px;border-radius:2px;background:#CFCAC1}
+.dot{position:absolute;border-radius:50%}
+.pill{display:inline-flex;align-items:center;justify-content:center;height:76px;padding:0 34px;border-radius:38px;background:#F2EDE6;border:1px solid rgba(36,35,32,.08);font-size:30px;font-weight:500;white-space:nowrap}
+.row{position:absolute;left:0;width:735px;height:111px}
+.row .ic{position:absolute;left:49px;top:19px;width:72px;height:72px;border-radius:50%;background:#F7E4DA}
+.row .ic svg,.row .ic b{position:absolute;left:0;top:0;width:72px;height:72px}
+.row .ic b{font-family:var(--serif);font-weight:400;font-size:44px;line-height:72px;text-align:center}
+.row .k{position:absolute;left:168px;top:0;line-height:111px;font-size:32px}
+.row .v{position:absolute;left:437px;top:0;line-height:111px;font-size:32px;font-weight:600}
+.row .u{position:absolute;left:437px;top:76px;height:4px;border-radius:2px;background:var(--coral);transform-origin:0 50%;transform:scaleX(0)}
+.row .div{position:absolute;left:47px;right:45px;bottom:0;height:1px;background:#ECE8E1}
+.chipc{display:inline-flex;align-items:center;height:72px;padding:0 30px;border-radius:36px;background:#F7E4DA;font-size:32px;font-weight:500;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -73,10 +86,77 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
   <div class="abs mini" id="m2" style="left:576px;top:1200px;width:148px;height:112px"><i style="top:34px;width:96px"></i><i style="top:60px;width:62px"></i></div>
   <div class="abs support center" id="s2s" style="top:1452px">Como o elemento aparece.</div>
 
-  <!-- 03 · Defina o ritmo (14–23 s): os dois contêineres viram as pistas -->
+  <!-- 03 · Defina o ritmo: os dois contêineres viram as pistas -->
   <div class="abs serif center" id="s3t" style="top:312px;font-size:158px">Defina o <span class="it">ritmo</span></div>
+  <div class="abs label" id="lA" style="left:150px;top:600px">Linear</div>
+  <div class="abs label" id="lB" style="left:150px;top:926px">Ease in-out</div>
+  <i class="abs track" id="trA" style="left:149px;top:724px;width:646px"></i>
+  <svg class="abs" id="rpA" style="left:770px;top:598px" width="40" height="40" viewBox="0 0 40 40"><path d="M30 12a12 12 0 1 0 3 10" fill="none" stroke="#D88467" stroke-width="3" stroke-linecap="round"/><path d="M31 4v9h-9" fill="none" stroke="#D88467" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg class="abs" id="rpB" style="left:770px;top:924px" width="40" height="40" viewBox="0 0 40 40"><path d="M30 12a12 12 0 1 0 3 10" fill="none" stroke="#D88467" stroke-width="3" stroke-linecap="round"/><path d="M31 4v9h-9" fill="none" stroke="#D88467" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="abs" id="pill3" style="left:274px;top:1221px;width:394px;height:68px;border:2px solid var(--coral);border-radius:34px;color:var(--coral);font-size:30px;font-weight:500;text-align:center;line-height:64px">Acelera. Desacelera.</div>
+  <div class="abs serif center" id="s3s" style="top:1340px;font-size:104px">O tempo muda a sensação.</div>
+
+  <!-- 04 · Guie a leitura: o card herdado recebe o texto; a pista vira a faixa sob "ideia" -->
+  <div class="abs serif center" id="s4t" style="top:205px;font-size:165px">Guie a <span class="it">leitura</span></div>
+  <i class="abs" id="band" style="z-index:1"></i>
+  <div class="abs serif center" id="w1" style="z-index:2;top:548px;font-size:150px"><span id="wd0">Uma</span> <span id="wd1">ideia</span></div>
+  <div class="abs serif center" id="w2" style="z-index:2;top:684px;font-size:150px"><span id="wd2">por</span> <span id="wd3">vez</span></div>
+  <div class="abs" id="ui4" style="left:226px;top:855px;width:500px;height:120px">
+    <div style="position:absolute;left:0;top:0;width:74px;height:74px;border-radius:50%;border:2px solid #DAD6CF"><svg width="74" height="74" viewBox="0 0 74 74" style="position:absolute;left:-2px;top:-2px"><path d="M31 25v24l20-12z" fill="#D88467"/></svg></div>
+    <i style="position:absolute;left:94px;top:35px;width:395px;height:2px;background:#D8D3CB"></i>
+    <i id="pbar" style="position:absolute;left:94px;top:35px;width:395px;height:2px;background:var(--coral);transform-origin:0 50%;transform:scaleX(0)"></i>
+    <div style="position:absolute;left:0;top:70px;width:490px;text-align:center;font-size:26px;font-weight:500;letter-spacing:.04em;padding-left:94px">Word by word</div>
+  </div>
+  <div class="abs card" id="cnt" style="left:263px;top:1028px;width:415px;height:264px;border-radius:24px">
+    <div class="serif" id="num" style="position:absolute;left:0;top:36px;width:415px;text-align:center;font-size:150px;font-variant-numeric:lining-nums">0</div>
+    <div style="position:absolute;left:0;top:200px;width:415px;text-align:center;font-size:25px;font-weight:500;letter-spacing:.04em">Count up · demonstração</div>
+  </div>
+  <i class="abs" id="s4line" style="left:373px;top:1340px;width:195px;height:2px;background:var(--coral);opacity:.6;transform-origin:50% 50%"></i>
+  <div class="abs serif center" id="s4s" style="top:1366px;font-size:104px">Destaque o que importa<span style="color:var(--coral)">.</span></div>
+
+  <!-- 05 · Conecte as cenas: a faixa vira o quadrado do morph; o wipe ocupa o quadro -->
+  <div class="abs serif center" id="s5a" style="top:140px;font-size:172px">Conecte</div>
+  <div class="abs serif center" id="s5b" style="top:312px;font-size:172px">as <span class="it">cenas</span></div>
+  <div class="abs card" id="c5a" style="left:109px;top:585px;width:725px;height:380px;border-radius:24px"></div>
+  <div class="abs label center" id="l5a" style="top:878px;font-size:36px">Morph</div>
+  <div class="abs card" id="c5b" style="left:109px;top:995px;width:725px;height:370px;border-radius:24px">
+    <div id="win" style="position:absolute;left:66px;top:40px;width:593px;height:230px;border-radius:16px;overflow:hidden">
+      <svg style="position:absolute;inset:0" width="593" height="230" viewBox="0 0 593 230"><rect width="593" height="230" fill="#ECE8E1"/><path d="M0 150c90-40 170-36 250-6s180 20 343-30v116H0z" fill="#DFD9D0"/><path d="M0 190c120-34 240-20 350 0s170 4 243-20v60H0z" fill="#D3CCC1"/></svg>
+      <svg id="winB" style="position:absolute;inset:0" width="593" height="230" viewBox="0 0 593 230"><rect width="593" height="230" fill="#F6D9C8"/><circle cx="470" cy="78" r="28" fill="#FBEADF"/><path d="M0 140c110-46 210-40 300-6s190 10 293-34v130H0z" fill="#E7A688"/><path d="M0 182c130-38 260-22 370 2s160 0 223-20v66H0z" fill="#C9775A"/></svg>
+    </div>
+    <i id="wband" style="position:absolute;left:0;top:28px;width:110px;height:254px;border-radius:10px;background:var(--coral);box-shadow:0 10px 24px rgba(216,132,103,.3)"></i>
+  </div>
+  <div class="abs label center" id="l5b" style="top:1290px;font-size:36px">Wipe</div>
+  <div class="abs support center" id="s5s" style="top:1420px;letter-spacing:.01em">Transforme. Revele. Continue.</div>
+
+  <!-- 06 · Escreva a ação -->
+  <div class="abs serif center" id="s6t" style="top:150px;font-size:160px">Escreva a <span class="it">ação</span></div>
+  <div class="abs card" id="tbl" style="left:103px;top:380px;width:735px;height:470px;border-radius:24px"></div>
+  <div class="abs" id="chips6" style="left:103px;top:579px;width:735px;display:flex;justify-content:center;align-items:center;gap:16px;font-size:36px;color:var(--coral)">
+    <span class="chipc" style="color:var(--ink)">Elemento</span>+<span class="chipc" style="color:var(--ink)">Ação</span>+<span class="chipc" style="color:var(--ink)">Tempo</span>
+  </div>
+  <svg class="abs" id="arr6" style="left:450px;top:866px" width="40" height="96" viewBox="0 0 40 96"><path d="M20 2v88M8 76l12 14 12-14" fill="none" stroke="#D88467" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="abs card" id="prev" style="left:91px;top:978px;width:760px;height:380px;border-radius:24px;background:#F6F1EA">
+    <div id="prevT" style="position:absolute;left:0;top:0;width:760px;height:380px">
+      <div class="serif" style="position:absolute;left:0;top:58px;width:760px;text-align:center;font-size:136px">Movimento</div>
+      <div class="serif" style="position:absolute;left:0;top:190px;width:760px;text-align:center;font-size:136px">com <span class="it">intenção</span></div>
+    </div>
+  </div>
+  <div class="abs support center" id="s6s" style="top:1420px">Elemento + ação + tempo.</div>
+
+  <!-- 07 · Salve para consultar -->
+  <div class="abs serif center" id="s7a" style="top:150px;font-size:196px">Salve para</div>
+  <div class="abs serif center it" id="s7b" style="top:340px;font-size:196px">consultar.</div>
+  <svg class="abs" id="mark" style="left:345px;top:612px" width="252" height="370" viewBox="0 0 252 370"><path d="M26 0h200a26 26 0 0 1 26 26v330a8 8 0 0 1-12.6 6.5L126 282 12.6 362.5A8 8 0 0 1 0 356V26A26 26 0 0 1 26 0z" fill="#D88467"/></svg>
+  <div class="abs" id="chips7" style="left:0;top:1070px;width:941px;display:flex;justify-content:center;gap:18px">
+    <span class="pill">Entrada</span><span class="pill">Ritmo</span><span class="pill">Texto</span><span class="pill">Transição</span>
+  </div>
+  <div class="abs serif center" id="s7c" style="top:1212px;font-size:124px">Crie com <span class="it">direção.</span></div>
+  <img class="abs" id="logo" src="assets/logo-jackdsgn-horizontal-laranja-preto.svg" style="left:390px;top:1386px;width:161px;height:42px" alt="">
 
 </div>
+  <!-- wipe que ocupa o quadro (fora da escala): da cena 05 para a 06 -->
+  <i class="abs" id="wipeAll" style="width:1080px;height:1920px;background:var(--coral)"></i>
 </div>
 
 <script>
@@ -132,14 +212,46 @@ const G = {
   card2: { x: 109, y: 772, w: 725, h: 289, r: 24, c: 0 },
   track1: { x: 92, y: 557, w: 760, h: 278, r: 26, c: 0 },
   track2: { x: 92, y: 883, w: 760, h: 278, r: 26, c: 0 },
+  card4: { x: 157, y: 487, w: 627, h: 504, r: 28, c: 0 },
 };
 
-// ---------- timeline ----------
-const S = [0, 5, 14, 23, 32, 41, 55];     // início de cada cena
-const DURATION = 60;
+// ---------- construção ----------
+const C = $('content');
+const dotEl = (size, bg) => { const d = document.createElement('i'); d.className = 'abs dot'; Object.assign(d.style, { width: size + 'px', height: size + 'px', background: bg }); C.appendChild(d); return d; };
+const cA = dotEl(48, '#242320'), cB = dotEl(52, '#D88467');
+cA.style.boxShadow = '0 6px 14px rgba(36,35,32,.22)'; cB.style.boxShadow = '0 6px 14px rgba(216,132,103,.35)';
+// pontos da barra do word by word
+const PD = [0, 1, 2, 3].map(i => { const d = document.createElement('i'); Object.assign(d.style, { position: 'absolute', left: (94 + i * 395 / 3 - 8) + 'px', top: '28px', width: '16px', height: '16px', borderRadius: '50%', background: '#CFCAC1' }); $('ui4').appendChild(d); return d; });
+// linhas da ficha (cena 06)
+const ICONS = [
+  '<b>T</b>',
+  '<svg viewBox="0 0 72 72"><path d="M33 22l3 9 9 3-9 3-3 9-3-9-9-3 9-3zM46 40l1.6 4.4L52 46l-4.4 1.6L46 52l-1.6-4.4L40 46l4.4-1.6z" fill="#242320"/></svg>',
+  '<svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="15" fill="none" stroke="#242320" stroke-width="2.6"/><path d="M36 28v9l6 4" fill="none" stroke="#242320" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  '<svg viewBox="0 0 72 72"><path d="M23 28h26M23 36h26M23 44h18" fill="none" stroke="#242320" stroke-width="2.6" stroke-linecap="round"/></svg>',
+];
+const ROWS = [['Elemento:', 'título'], ['Entrada:', 'fade in'], ['Duração:', '0,5 s'], ['Leitura:', '2 s']].map(([k, v], i) => {
+  const d = document.createElement('div'); d.className = 'row'; d.style.top = (14 + i * 111) + 'px';
+  d.innerHTML = `<div class="ic">${ICONS[i]}</div><div class="k">${k}</div><div class="v">${v}</div><i class="u"></i>${i < 3 ? '<i class="div"></i>' : ''}`;
+  $('tbl').appendChild(d); return d;
+});
+
+// posições medidas depois das fontes (coordenadas de #content)
+const M = {};
+function measure() {
+  const c = C.getBoundingClientRect(), k = 1.02;
+  const r = el => { const b = el.getBoundingClientRect(); return { x: (b.left - c.left) / k, y: (b.top - c.top) / k, w: b.width / k, h: b.height / k }; };
+  M.ideia = r($('wd1'));
+  ROWS.forEach(row => { row.querySelector('.u').style.width = r(row.querySelector('.v')).w + 'px'; });
+}
+
+// curvas da cena 03: linear de propósito e ease-in-out sem overshoot
+const inOutCubic = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+// ---------- timeline (segundos; as ações seguem as palavras da narração, ver audio/palavras.json) ----------
+const DURATION = 55.0;
 
 function seek(t) {
-  // 01 · Hook (0–5 s): título legível no primeiro quadro; só "direção?" ganha o coral
+  // 01 · Hook (0–4,6 s): título legível no primeiro quadro; só "direção?" ganha o coral
   {
     const out = 4.50;
     put($('s1a'), { o: leave(t, out, 0.4) });
@@ -150,10 +262,10 @@ function seek(t) {
     put($('link1'), { o: leave(t, out, 0.4) });
     $('link1').style.transform += ` scaleY(${INOUT(prog(t, 1.30, 1.60)).toFixed(4)})`;
     show($('s1s'), t, 1.90, 0.50, out, { dy: 16, outD: 0.4 });
-    put($('qmark'), { o: enter(t, 1.55, 0.4) * leave(t, 3.70, 0.90), s: lerp(0.92, 1, enter(t, 1.55, 0.4)) });
+    put($('qmark'), { o: enter(t, 1.55, 0.4) * leave(t, 3.70, 0.90), s: lerp(0.92, 1, enter(t, 1.55, 0.4)) });   // sai em "Dê direção"
   }
 
-  // quadrado coral → card do Fade in (4,6–5,4 s) → pista Linear da cena 03 (13,5–14,0 s)
+  // contêiner 1: quadrado coral → card do Fade in → pista Linear → card do word by word
   {
     const b = $('box1');
     let g;
@@ -161,41 +273,139 @@ function seek(t) {
       const p = enter(t, 1.50, 0.40);                       // o quadrado aparece em 0,4 s
       g = { ...G.square }; put(b, { o: p, s: lerp(0.92, 1, p) });
     } else {
-      const grow = INOUT(prog(t, 4.60, 5.40));
-      g = mixG(G.square, G.card1, grow);
+      g = mixG(G.square, G.card1, INOUT(prog(t, 4.60, 5.40)));
       g.c = 1 - INOUT(prog(t, 4.95, 5.40));                 // o coral clareia no fim da expansão
-      g = mixG(g, G.track1, INOUT(prog(t, 13.50, 14.00)));
-      put(b, { o: 1 });
+      g = mixG(g, G.track1, INOUT(prog(t, 13.35, 13.85)));
+      g = mixG(g, G.card4, INOUT(prog(t, 22.10, 22.60)));
+      put(b, { o: leave(t, 29.30, 0.30) });
     }
     box(b, g);
   }
 
-  // 02 · Escolha a entrada (5–14 s)
+  // 02 · Escolha a entrada (4,6–13,85 s): cada efeito no próprio card, quando a voz o nomeia
   {
-    const e = t - S[1], out = 13.50;
+    const out = 13.35;
     show($('s2t'), t, 5.00, 0.40, out, { dy: 20 });
-    // contêineres 2 e 3 (vazios) entram; o 2 vira a pista Ease in-out, o 3 perde opacidade
-    show($('box2'), t, 5.15, 0.45, null, { dy: 24, s0: 0.97 });
-    show($('box3'), t, 5.27, 0.45, 13.50, { dy: 24, s0: 0.97, outD: 0.35 });
-    const g2 = mixG(G.card2, G.track2, INOUT(prog(t, 13.50, 14.00)));
+    show($('box2'), t, 5.15, 0.45, 22.10, { dy: 24, s0: 0.97, outD: 0.25 });
+    show($('box3'), t, 5.27, 0.45, out, { dy: 24, s0: 0.97, outD: 0.35 });
+    const g2 = mixG(G.card2, G.track2, INOUT(prog(t, 13.35, 13.85)));
     Object.assign($('box2').style, { left: g2.x + 'px', top: g2.y + 'px', width: g2.w + 'px', height: g2.h + 'px', borderRadius: g2.r + 'px' });
     ['l1', 'l2', 'l3'].forEach((id, i) => show($(id), t, 5.30 + 0.10 * i, 0.40, out, { dy: 12, outD: 0.2 }));
     show($('s2s'), t, 5.60, 0.45, out, { dy: 12, outD: 0.2 });
-    // Fade in: um quadrado vai de 0 a 100% em 0,6 s e permanece
-    put($('fadeSq'), { o: prog(t, S[1] + 0.6, S[1] + 1.2) * leave(t, out, 0.2) });
-    // Slide in: desliza 140 px da esquerda em 0,65 s, ease-out
-    { const p = OUT(prog(t, S[1] + 2.7, S[1] + 3.35)); put($('slideSq'), { o: clamp((t - (S[1] + 2.7)) / 0.12) * leave(t, out, 0.2), x: -137 * (1 - p) }); }
-    // Stagger: três cards sobem 24 px com fade, 0,4 s cada, defasados 0,15 s
-    ['m0', 'm1', 'm2'].forEach((id, i) => show($(id), t, S[1] + 5.0 + 0.15 * i, 0.40, out, { dy: 24, outD: 0.2 }));
+    put($('fadeSq'), { o: prog(t, 6.25, 6.85) * leave(t, out, 0.2) });                            // "Fade in": 0→100% em 0,6 s
+    { const p = OUT(prog(t, 8.95, 9.60)); put($('slideSq'), { o: clamp((t - 8.95) / 0.12) * leave(t, out, 0.2), x: -137 * (1 - p) }); }   // "Slide in": 140 px em 0,65 s
+    ['m0', 'm1', 'm2'].forEach((id, i) => show($(id), t, 10.85 + 0.15 * i, 0.40, out, { dy: 24, outD: 0.2 }));   // "Stagger"
   }
 
-  // 03 · Defina o ritmo (14–23 s)
-  show($('s3t'), t, 14.00, 0.45, null, { dy: 20 });
+  // 03 · Defina o ritmo (13,85–22,6 s): mesma distância e duração, curvas diferentes; repete uma vez
+  {
+    const out = 22.10;
+    show($('s3t'), t, 13.85, 0.45, out, { dy: 20 });
+    show($('lA'), t, 13.95, 0.40, out, { dy: 10 });
+    show($('lB'), t, 14.05, 0.40, out, { dy: 10 });
+    put($('trA'), { o: leave(t, out, 0.25) }); $('trA').style.transform += ` scaleX(${INOUT(prog(t, 13.90, 14.35)).toFixed(4)})`; $('trA').style.transformOrigin = '0 50%';
+    const run = (a) => prog(t, a, a + 2.5);
+    const second = t >= 19.0;
+    const p = second ? run(19.30) : run(15.85);              // 1ª em "Ease in-out"; corte didático; 2ª
+    const vis = enter(t, 14.15, 0.3) * (second ? enter(t, 19.10, 0.15) : leave(t, 18.85, 0.15)) * leave(t, out, 0.25);
+    put(cA, { o: vis, x: 149 + 470 * p, y: 724 + 1.5 - 24 });
+    put(cB, { o: vis, x: 149 + 470 * inOutCubic(p), y: 1051 + 1.5 - 26 });
+    cA.style.left = cB.style.left = '0px'; cA.style.top = cB.style.top = '0px';
+    ['rpA', 'rpB'].forEach(id => put($(id), { o: enter(t, 18.85, 0.15) * leave(t, 19.30, 0.2), r: -200 * prog(t, 18.85, 19.45) }));
+    show($('pill3'), t, 16.50, 0.40, out, { dy: 10 });
+    show($('s3s'), t, 20.20, 0.45, out, { dy: 14 });
+  }
+
+  // faixa: pista inferior → sublinhado de "ideia" → faixa coral → quadrado do morph → círculo
+  {
+    const i = M.ideia || { x: 480, y: 560, w: 260, h: 140 };
+    const L = { x: 149, y: 1051, w: 646, h: 3, r: 2, c: 0 };
+    const U = { x: i.x - 6, y: i.y + i.h * 0.86, w: i.w + 12, h: 4, r: 2, c: 1 };
+    const B = { x: i.x - 6, y: i.y + i.h * 0.12, w: i.w + 12, h: i.h * 0.78, r: 6, c: 1 };
+    const Q = { x: 356, y: 616, w: 228, h: 228, r: 16, c: 1 };
+    let g = mixG(L, U, INOUT(prog(t, 22.10, 22.60)));
+    g = mixG(g, B, OUT(prog(t, 27.45, 27.95)));             // "destaque": a faixa cresce por trás da palavra em 0,5 s
+    g = mixG(g, Q, INOUT(prog(t, 29.30, 29.90)));           // encolhe para o quadrado coral da cena 05
+    g.r = lerp(g.r, 114, INOUT(prog(t, 31.15, 32.95)));     // morph: arredonda até virar círculo, centro fixo
+    const light = prog(t, 27.45, 27.95) * (1 - prog(t, 29.30, 29.90));     // faixa clara atrás do texto
+    const el = $('band');
+    Object.assign(el.style, { left: g.x + 'px', top: g.y + 'px', width: g.w + 'px', height: g.h + 'px', borderRadius: g.r + 'px' });
+    const col = g.c < 1 ? `color-mix(in oklab, #D88467 ${(g.c * 100).toFixed(1)}%, #CFCAC1)` : `color-mix(in oklab, #F6C8B4 ${(light * 100).toFixed(1)}%, #D88467)`;
+    el.style.background = col;
+    el.style.boxShadow = t > 29.3 ? `0 10px 24px rgba(216,132,103,${(0.3 * prog(t, 29.3, 29.9)).toFixed(3)})` : 'none';
+    put(el, { o: (t < 13.9 ? 0 : 1) * leave(t, 37.28, 0.02) });
+    el.style.transform += ` scaleX(${t < 22.1 ? INOUT(prog(t, 13.90, 14.35)).toFixed(4) : 1})`; el.style.transformOrigin = '0 50%';
+  }
+
+  // 04 · Guie a leitura (22,6–29,8 s)
+  {
+    const out = 29.30;
+    show($('s4t'), t, 22.60, 0.45, out, { dy: 20 });
+    ['wd0', 'wd1', 'wd2', 'wd3'].forEach((id, k) => { $(id).style.opacity = prog(t, 23.45 + 0.4 * k, 23.70 + 0.4 * k).toFixed(4); });   // "revele palavras": uma a cada 0,4 s
+    put($('w1'), { o: leave(t, out, 0.25) }); put($('w2'), { o: leave(t, out, 0.25) });
+    show($('ui4'), t, 22.80, 0.40, out, { dy: 12 });
+    const steps = [0, 1, 2, 3].reduce((a, k) => a + OUT(prog(t, 23.45 + 0.4 * k, 23.70 + 0.4 * k)), 0);
+    $('pbar').style.transform = `scaleX(${(Math.max(0, steps - 1) / 3).toFixed(4)})`;
+    PD.forEach((d, k) => { const on = OUT(prog(t, 23.45 + 0.4 * k, 23.70 + 0.4 * k)); d.style.background = `color-mix(in oklab, #D88467 ${(on * 100).toFixed(0)}%, #CFCAC1)`; d.style.transform = `scale(${lerp(0.75, 1.15, on).toFixed(3)})`; });
+    show($('cnt'), t, 25.90, 0.40, out, { dy: 20 });
+    $('num').textContent = Math.round(24 * OUT(prog(t, 26.25, 27.95)));      // "contagem": 0 → 24 em 1,7 s, desacelerando
+    put($('s4line'), { o: 0.6 * leave(t, out, 0.25), s: 1 }); $('s4line').style.transform += ` scaleX(${INOUT(prog(t, 28.30, 28.70)).toFixed(4)})`;
+    show($('s4s'), t, 28.45, 0.45, out, { dy: 14 });
+  }
+
+  // 05 · Conecte as cenas (29,8–37,3 s)
+  {
+    const out = 37.28, o = { outD: 0.02 };
+    show($('s5a'), t, 29.80, 0.45, out, { dy: 20, ...o });
+    show($('s5b'), t, 29.88, 0.45, out, { dy: 20, ...o });
+    show($('c5a'), t, 29.70, 0.45, out, { dy: 24, s0: 0.97, ...o });
+    show($('l5a'), t, 30.40, 0.40, out, { dy: 10, ...o });
+    show($('c5b'), t, 33.20, 0.45, out, { dy: 24, s0: 0.97, ...o });          // "ou revele": segunda janela
+    show($('l5b'), t, 33.50, 0.40, out, { dy: 10, ...o });
+    const p = INOUT(prog(t, 33.80, 35.80));                                    // faixa atravessa a janela
+    $('winB').style.clipPath = `inset(0 ${((1 - p) * 100).toFixed(2)}% 0 0)`;
+    $('wband').style.left = (66 + 593 * p - 55).toFixed(2) + 'px';
+    show($('s5s'), t, 35.40, 0.45, out, { dy: 12, ...o });
+    // o wipe se amplia até ocupar o quadro e sai pela direita revelando a cena 06
+    const w = INOUT(prog(t, 36.70, 37.30)), w2 = INOUT(prog(t, 37.30, 37.90));
+    put($('wipeAll'), { o: t > 36.7 && t < 37.9 ? 1 : 0, x: -1080 * (1 - w) + 1080 * w2 });
+  }
+
+  // 06 · Escreva a ação (37,3–49,0 s)
+  {
+    const out = 48.50;
+    show($('s6t'), t, 37.45, 0.45, out, { dy: 20 });
+    show($('tbl'), t, 37.60, 0.45, out, { dy: 24, s0: 0.98 });
+    [39.40, 40.20, 40.85, 42.35].forEach((a, k) => {                           // "título", "fade in", "meio segundo", "dois segundos"
+      show(ROWS[k], t, a, 0.40, 47.20, { dy: 12 });
+    });
+    [45.10, 45.90, 46.55, 46.70].forEach((a, k) => {                           // "elemento", "ação", "tempo"
+      ROWS[k].querySelector('.u').style.transform = `scaleX(${OUT(prog(t, a, a + 0.35)).toFixed(4)})`;
+    });
+    show($('chips6'), t, 47.45, 0.45, out, { dy: 10, s0: 0.96 });
+    show($('arr6'), t, 38.00, 0.40, out, { dy: -10 });
+    // prévia: o título aparece SÓ por opacidade, 0 → 100% em 0,5 s, e fica 2 s imóvel
+    { const r = INOUT(prog(t, 48.40, 48.90)); put($('prev'), { o: enter(t, 38.10, 0.45) * (1 - r), y: (1 - enter(t, 38.10, 0.45)) * 20, s: 1 - 0.08 * r }); }
+    $('prevT').style.opacity = prog(t, 42.95, 43.45).toFixed(4);
+    show($('s6s'), t, 47.70, 0.45, out, { dy: 12 });
+  }
+
+  // 07 · Salve para consultar (49,0–55,0 s)
+  {
+    show($('s7a'), t, 49.00, 0.45, null, { dy: 20 });
+    show($('s7b'), t, 49.08, 0.45, null, { dy: 20 });
+    const m = INOUT(prog(t, 49.20, 49.80));                                    // marcador por recorte vertical
+    $('mark').style.clipPath = `inset(0 0 ${((1 - m) * 100).toFixed(2)}% 0)`;
+    put($('mark'), { o: t > 49.2 ? 1 : 0 });
+    [...$('chips7').children].forEach((c, k) => show(c, t, 49.80 + 0.12 * k, 0.40, null, { dy: 12 }));
+    put($('s7c'), { o: prog(t, 50.50, 51.10) });                               // frase final só por opacidade
+    put($('logo'), { o: prog(t, 50.70, 51.20) });
+  }
 }
 
 window.seek = seek;
 window.DURATION = DURATION;
-window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode()))).then(() => { seek(0); return true; });
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode()))).then(() => { measure(); seek(0); return true; });
 
 const q = new URLSearchParams(location.search);
 if (q.has('t')) window.ready.then(() => seek(+q.get('t')));
