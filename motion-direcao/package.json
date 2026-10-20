@@ -1,0 +1,13 @@
+{
+  "name": "motion-com-direcao",
+  "private": true,
+  "type": "module",
+  "description": "Motion explicativo PT-BR \"Motion com direção\": seek(t) determinístico, render em Chrome headless.",
+  "scripts": {
+    "stills": "node tools/stills.mjs",
+    "render": "node tools/render.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Motion com direção</title>
+<!--
+  Motion explicativo "Motion com direção · Do termo ao prompt" · 1080×1920 (9:16) · 30 fps · 60 s.
+  Storyboard: Storyboard_Motion_com_Direcao_v01_APROVACAO.pdf (7 cenas, tempos locais nas fichas).
+
+  As cenas são desenhadas nas coordenadas dos frames do storyboard (941×1672) dentro de #content,
+  escalado em 1,02× e centralizado para caber na área segura pedida (x 90–990, y 180–1600).
+  Onde o frame e a ficha divergem, vale a ficha: rastros e setas dos frames são notação, então cada
+  efeito mostra um único objeto.
+
+  O quadro é função pura do tempo: window.seek(t). Sem CSS transitions, timers, relógio do
+  navegador ou valores aleatórios. Abra com ?t=4.6 para um quadro, ?play para tocar.
+-->
+<style>
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;src:url("assets/InstrumentSerif-Regular.woff2") format("woff2")}
+@font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;src:url("assets/InstrumentSerif-Italic.woff2") format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:100 900;src:url("assets/Inter-var.woff2") format("woff2")}
+
+:root{
+  --bg:#F8F5EF; --ink:#242320; --coral:#D88467; --card:#FCFAF7; --line:#DAD6CF; --muted:#8C877E;
+  --serif:"Instrument Serif",serif; --sans:"Inter",sans-serif;
+  --shadow:0 1px 2px rgba(36,35,32,.05),0 16px 32px rgba(36,35,32,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+#stage{position:absolute;inset:0;overflow:hidden;
+  background:radial-gradient(ellipse 900px 1100px at 540px 900px, rgba(255,255,255,.45), transparent 70%), var(--bg)}
+#content{position:absolute;left:0;top:0;width:941px;height:1672px;transform-origin:0 0;transform:translate(60px,37px) scale(1.02)}
+.abs{position:absolute;left:0;top:0;transform-origin:50% 50%}
+.serif{font-family:var(--serif);font-weight:400;letter-spacing:-.025em;line-height:1;white-space:nowrap}
+.it{font-style:italic;color:var(--coral)}
+.center{width:941px;text-align:center}
+.card{background:var(--card);border:1px solid rgba(36,35,32,.06);box-shadow:var(--shadow)}
+.support{font-size:44px;font-weight:400;letter-spacing:-.005em;white-space:nowrap}
+.label{font-size:38px;font-weight:500;letter-spacing:-.01em;white-space:nowrap}
+.sq{background:var(--coral);border-radius:12px;box-shadow:0 10px 22px rgba(216,132,103,.28)}
+.mini{background:var(--coral);border-radius:12px;box-shadow:0 8px 18px rgba(216,132,103,.25)}
+.mini i{position:absolute;left:24px;height:9px;border-radius:5px;background:rgba(255,255,255,.75)}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="content">
+
+  <!-- 01 · Seu prompt tem direção? (0–5 s) -->
+  <div class="abs serif center" id="s1a" style="top:208px;font-size:196px">Seu prompt</div>
+  <div class="abs serif center" id="s1b" style="top:390px;font-size:196px">tem <span id="s1hl" style="font-style:italic">direção?</span></div>
+  <div class="abs card" id="ask" style="left:137px;top:706px;width:667px;height:189px;border-radius:28px">
+    <div style="position:absolute;left:56px;top:0;line-height:187px;font-size:44px;letter-spacing:-.005em">Faça algo dinâmico</div>
+    <i id="caret" style="position:absolute;left:541px;top:68px;width:3px;height:54px;border-radius:2px;background:#9C978E"></i>
+  </div>
+  <i class="abs" id="link1" style="left:469px;top:918px;width:2px;height:88px;background:var(--coral);transform-origin:50% 0"></i>
+  <div class="abs serif" id="qmark" style="z-index:2;left:370px;top:1027px;width:202px;line-height:196px;text-align:center;font-size:150px;color:#fff;font-style:normal">?</div>
+  <div class="abs support center" id="s1s" style="top:1326px">Dê instruções ao movimento.</div>
+
+  <!-- 02 · Escolha a entrada (5–14 s): o quadrado coral vira o primeiro card -->
+  <div class="abs serif center" id="s2t" style="top:212px;font-size:152px">Escolha a <span class="it">entrada</span></div>
+  <div class="abs" id="box1"></div>
+  <div class="abs card" id="box2" style="left:109px;top:772px;width:725px;height:289px;border-radius:24px"></div>
+  <div class="abs card" id="box3" style="left:109px;top:1101px;width:725px;height:291px;border-radius:24px"></div>
+  <div class="abs label" id="l1" style="left:157px;top:476px">Fade in</div>
+  <div class="abs label" id="l2" style="left:157px;top:811px">Slide in</div>
+  <div class="abs label" id="l3" style="left:157px;top:1137px">Stagger</div>
+  <div class="abs sq" id="fadeSq" style="left:634px;top:563px;width:108px;height:108px"></div>
+  <div class="abs sq" id="slideSq" style="left:613px;top:888px;width:110px;height:110px"></div>
+  <div class="abs mini" id="m0" style="left:216px;top:1241px;width:143px;height:95px"><i style="top:30px;width:92px"></i><i style="top:52px;width:58px"></i></div>
+  <div class="abs mini" id="m1" style="left:398px;top:1222px;width:141px;height:103px"><i style="top:32px;width:92px"></i><i style="top:56px;width:58px"></i></div>
+  <div class="abs mini" id="m2" style="left:576px;top:1200px;width:148px;height:112px"><i style="top:34px;width:96px"></i><i style="top:60px;width:62px"></i></div>
+  <div class="abs support center" id="s2s" style="top:1452px">Como o elemento aparece.</div>
+
+  <!-- 03 · Defina o ritmo (14–23 s): os dois contêineres viram as pistas -->
+  <div class="abs serif center" id="s3t" style="top:312px;font-size:158px">Defina o <span class="it">ritmo</span></div>
+
+</div>
+</div>
+
+<script>
+// ---------- tempo e easing ----------
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, p) => a + (b - a) * p;
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const X = s => ((ax * s + bx) * s + cx) * s, Y = s => ((ay * s + by) * s + cy) * s;
+  const dX = s => (3 * ax * s + 2 * bx) * s + cx;
+  return x => {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    let s = x;
+    for (let i = 0; i < 8; i++) { const d = dX(s); if (Math.abs(d) < 1e-6) break; s -= (X(s) - x) / d; }
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 20 && Math.abs(X(s) - x) > 1e-6; i++) { X(s) > x ? hi = s : lo = s; s = (lo + hi) / 2; }
+    return Y(s);
+  };
+}
+const OUT = bezier(0.22, 1, 0.36, 1);      // ease-out suave das entradas
+const INOUT = bezier(0.65, 0, 0.35, 1);    // ease-in-out (saídas, morphs, deslocamentos)
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const enter = (t, a, d = 0.4) => OUT(prog(t, a, a + d));
+const leave = (t, a, d = 0.25) => 1 - INOUT(prog(t, a, a + d));
+
+const $ = id => document.getElementById(id);
+function put(el, { o = 1, x = 0, y = 0, s = 1, r = 0 } = {}) {
+  el.style.opacity = o.toFixed(4);
+  el.style.visibility = o <= 0.001 ? 'hidden' : 'visible';
+  el.style.transform = `translate(${x.toFixed(2)}px,${y.toFixed(2)}px) rotate(${r.toFixed(3)}deg) scale(${s.toFixed(4)})`;
+}
+// entrada (alpha + deslocamento + escala) e saída (alpha)
+function show(el, t, a, d, out, { dy = 24, dx = 0, s0 = 1, outD = 0.25 } = {}) {
+  const p = enter(t, a, d), q = out == null ? 1 : leave(t, out, outD);
+  put(el, { o: p * q, x: (1 - p) * dx, y: (1 - p) * dy, s: lerp(s0, 1, p) });
+}
+// caixa geométrica (morph): left, top, width, height, raio, cor
+function box(el, g) {
+  el.style.left = g.x.toFixed(2) + 'px'; el.style.top = g.y.toFixed(2) + 'px';
+  el.style.width = g.w.toFixed(2) + 'px'; el.style.height = g.h.toFixed(2) + 'px';
+  el.style.borderRadius = g.r.toFixed(2) + 'px';
+  el.style.background = `color-mix(in oklab, #D88467 ${(g.c * 100).toFixed(1)}%, #FCFAF7)`;
+  el.style.border = `1px solid rgba(36,35,32,${(0.06 * (1 - g.c)).toFixed(3)})`;
+  el.style.boxShadow = `0 1px 2px rgba(36,35,32,.05), 0 16px 32px rgba(${g.c > 0.5 ? '216,132,103,.30' : '36,35,32,.07'})`;
+}
+const mixG = (a, b, p) => ({ x: lerp(a.x, b.x, p), y: lerp(a.y, b.y, p), w: lerp(a.w, b.w, p), h: lerp(a.h, b.h, p), r: lerp(a.r, b.r, p), c: lerp(a.c, b.c, p) });
+
+// geometrias
+const G = {
+  square: { x: 370, y: 1027, w: 202, h: 196, r: 30, c: 1 },
+  card1: { x: 109, y: 437, w: 725, h: 294, r: 24, c: 0 },
+  card2: { x: 109, y: 772, w: 725, h: 289, r: 24, c: 0 },
+  track1: { x: 92, y: 557, w: 760, h: 278, r: 26, c: 0 },
+  track2: { x: 92, y: 883, w: 760, h: 278, r: 26, c: 0 },
+};
+
+// ---------- timeline ----------
+const S = [0, 5, 14, 23, 32, 41, 55];     // início de cada cena
+const DURATION = 60;
+
+function seek(t) {
+  // 01 · Hook (0–5 s): título legível no primeiro quadro; só "direção?" ganha o coral
+  {
+    const out = 4.50;
+    put($('s1a'), { o: leave(t, out, 0.4) });
+    put($('s1b'), { o: leave(t, out, 0.4) });
+    $('s1hl').style.color = `color-mix(in oklab, #D88467 ${(INOUT(prog(t, 0.0, 0.5)) * 100).toFixed(1)}%, #242320)`;
+    show($('ask'), t, 0.50, 0.90, out, { dy: 24, outD: 0.4 });                    // pedido genérico
+    $('caret').style.opacity = (t > 0.5 && Math.floor(t * 2.2) % 2 === 0) ? 1 : 0;
+    put($('link1'), { o: leave(t, out, 0.4) });
+    $('link1').style.transform += ` scaleY(${INOUT(prog(t, 1.30, 1.60)).toFixed(4)})`;
+    show($('s1s'), t, 1.90, 0.50, out, { dy: 16, outD: 0.4 });
+    put($('qmark'), { o: enter(t, 1.55, 0.4) * leave(t, 3.70, 0.90), s: lerp(0.92, 1, enter(t, 1.55, 0.4)) });
+  }
+
+  // quadrado coral → card do Fade in (4,6–5,4 s) → pista Linear da cena 03 (13,5–14,0 s)
+  {
+    const b = $('box1');
+    let g;
+    if (t < 4.6) {
+      const p = enter(t, 1.50, 0.40);                       // o quadrado aparece em 0,4 s
+      g = { ...G.square }; put(b, { o: p, s: lerp(0.92, 1, p) });
+    } else {
+      const grow = INOUT(prog(t, 4.60, 5.40));
+      g = mixG(G.square, G.card1, grow);
+      g.c = 1 - INOUT(prog(t, 4.95, 5.40));                 // o coral clareia no fim da expansão
+      g = mixG(g, G.track1, INOUT(prog(t, 13.50, 14.00)));
+      put(b, { o: 1 });
+    }
+    box(b, g);
+  }
+
+  // 02 · Escolha a entrada (5–14 s)
+  {
+    const e = t - S[1], out = 13.50;
+    show($('s2t'), t, 5.00, 0.40, out, { dy: 20 });
+    // contêineres 2 e 3 (vazios) entram; o 2 vira a pista Ease in-out, o 3 perde opacidade
+    show($('box2'), t, 5.15, 0.45, null, { dy: 24, s0: 0.97 });
+    show($('box3'), t, 5.27, 0.45, 13.50, { dy: 24, s0: 0.97, outD: 0.35 });
+    const g2 = mixG(G.card2, G.track2, INOUT(prog(t, 13.50, 14.00)));
+    Object.assign($('box2').style, { left: g2.x + 'px', top: g2.y + 'px', width: g2.w + 'px', height: g2.h + 'px', borderRadius: g2.r + 'px' });
+    ['l1', 'l2', 'l3'].forEach((id, i) => show($(id), t, 5.30 + 0.10 * i, 0.40, out, { dy: 12, outD: 0.2 }));
+    show($('s2s'), t, 5.60, 0.45, out, { dy: 12, outD: 0.2 });
+    // Fade in: um quadrado vai de 0 a 100% em 0,6 s e permanece
+    put($('fadeSq'), { o: prog(t, S[1] + 0.6, S[1] + 1.2) * leave(t, out, 0.2) });
+    // Slide in: desliza 140 px da esquerda em 0,65 s, ease-out
+    { const p = OUT(prog(t, S[1] + 2.7, S[1] + 3.35)); put($('slideSq'), { o: clamp((t - (S[1] + 2.7)) / 0.12) * leave(t, out, 0.2), x: -137 * (1 - p) }); }
+    // Stagger: três cards sobem 24 px com fade, 0,4 s cada, defasados 0,15 s
+    ['m0', 'm1', 'm2'].forEach((id, i) => show($(id), t, S[1] + 5.0 + 0.15 * i, 0.40, out, { dy: 24, outD: 0.2 }));
+  }
+
+  // 03 · Defina o ritmo (14–23 s)
+  show($('s3t'), t, 14.00, 0.45, null, { dy: 20 });
+}
+
+window.seek = seek;
+window.DURATION = DURATION;
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode()))).then(() => { seek(0); return true; });
+
+const q = new URLSearchParams(location.search);
+if (q.has('t')) window.ready.then(() => seek(+q.get('t')));
+if (q.has('play')) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(f); }; f(); });
+</script>
+</body>
+</html>
